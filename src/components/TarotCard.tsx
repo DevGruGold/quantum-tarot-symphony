@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { TarotCard as TarotCardType } from '@/utils/tarotData';
 import { calculateQuantumResonance } from '@/utils/tarotData';
 import { toast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 interface TarotCardProps {
   position: string;
@@ -38,6 +39,36 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
     });
   };
 
+  const getCardArtwork = (cardName: string) => {
+    // Map card names to their corresponding artwork
+    const artworkMap: Record<string, string> = {
+      'The Fool': '🃏',
+      'The Magician': '🎭',
+      'The High Priestess': '👑',
+      'The Empress': '👸',
+      'The Emperor': '🤴',
+      'The Hierophant': '⛪',
+      'The Lovers': '💑',
+      'The Chariot': '🏃',
+      'Strength': '💪',
+      'The Hermit': '🧙',
+      'Wheel of Fortune': '🎡',
+      'Justice': '⚖️',
+      'The Hanged Man': '🙃',
+      'Death': '💀',
+      'Temperance': '🕊️',
+      'The Devil': '😈',
+      'The Tower': '🗼',
+      'The Star': '⭐',
+      'The Moon': '🌙',
+      'The Sun': '☀️',
+      'Judgement': '📯',
+      'The World': '🌍',
+    };
+    
+    return artworkMap[cardName] || '🌟';
+  };
+
   return (
     <motion.div
       className="absolute cursor-pointer"
@@ -60,9 +91,11 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
           }}
         >
           <motion.div 
-            className="absolute inset-0 bg-gradient-to-br rounded-lg"
+            className={cn(
+              "absolute inset-0 rounded-lg flex flex-col items-center justify-center",
+              "bg-gradient-to-br from-gray-900/90 to-gray-800/90 backdrop-blur-sm"
+            )}
             style={{ 
-              background: `linear-gradient(45deg, ${color}${Math.floor(resonance * 100)}, ${color}99)`,
               border: `2px solid ${color}`,
               boxShadow: `0 0 ${20 + resonance * 20}px ${color}${Math.floor(resonance * 100)}`,
               transform: isRevealed ? 'rotateY(0deg)' : 'rotateY(180deg)',
@@ -79,12 +112,15 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
           >
             {isRevealed && card && (
               <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-white">
-                <div className="text-xl font-bold mb-2" style={{ 
+                <div className="text-8xl mb-4 quantum-float">
+                  {getCardArtwork(card.name)}
+                </div>
+                <div className="text-xl font-bold mb-2 text-center" style={{ 
                   transform: card.isReversed ? 'rotate(180deg)' : 'none' 
                 }}>
                   {card.name}
                 </div>
-                <div className="text-sm text-center">
+                <div className="text-sm text-center mt-2">
                   {position.charAt(0).toUpperCase() + position.slice(1)}
                   <br />
                   Frequency: {frequency.toFixed(3)}φ
@@ -105,7 +141,7 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
           >
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div 
-                className="text-4xl quantum-pulse"
+                className="text-6xl quantum-pulse"
                 animate={{
                   scale: [1, 1.2, 1],
                   opacity: [0.7, 1, 0.7]
@@ -116,7 +152,7 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
                   ease: "easeInOut"
                 }}
               >
-                🌟
+                ✨
               </motion.div>
             </div>
           </div>
