@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import BirthDateInput from '@/components/BirthDateInput';
 import QuantumWave from '@/components/QuantumWave';
 import TarotCard from '@/components/TarotCard';
+import { drawCard, TarotCard as TarotCardType } from '@/utils/tarotData';
+import { toast } from '@/components/ui/use-toast';
 
 const PHI = 1.618033988749895;
 
@@ -35,6 +37,7 @@ const Index = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [time, setTime] = useState(0);
   const [revealedCards, setRevealedCards] = useState<string[]>([]);
+  const [drawnCards, setDrawnCards] = useState<Record<string, TarotCardType>>({});
 
   useEffect(() => {
     let frameId: number;
@@ -51,11 +54,27 @@ const Index = () => {
   const handleStart = (date: string) => {
     setBirthDate(date);
     setIsRunning(true);
+    // Draw initial cards but don't reveal them
+    const initialCards: Record<string, TarotCardType> = {};
+    positions.forEach(pos => {
+      initialCards[pos.id] = drawCard();
+    });
+    setDrawnCards(initialCards);
+    
+    toast({
+      title: "Quantum Entanglement Initiated",
+      description: "The cards have been drawn. Click each to reveal your reading.",
+    });
   };
 
   const handleCardClick = (id: string) => {
     if (!revealedCards.includes(id)) {
       setRevealedCards(prev => [...prev, id]);
+      
+      toast({
+        title: `${id.charAt(0).toUpperCase() + id.slice(1)} Card Revealed`,
+        description: `${drawnCards[id].name} - ${drawnCards[id].isReversed ? 'Reversed' : 'Upright'}`,
+      });
     }
   };
 
@@ -95,13 +114,14 @@ const Index = () => {
               y={pos.y}
               frequency={pos.frequency}
               isRevealed={revealedCards.includes(pos.id)}
+              card={drawnCards[pos.id]}
               onClick={() => handleCardClick(pos.id)}
             />
           ))}
         </div>
 
         <div className="absolute bottom-4 left-4 right-4">
-          <div className="bg-gray-800 p-4 rounded-lg">
+          <div className="bg-gray-800/80 p-4 rounded-lg backdrop-blur-sm">
             <div className="text-sm text-gray-300">
               <div className="font-bold mb-2">Quantum-Tarot Frequencies:</div>
               <div className="grid grid-cols-3 gap-4">
