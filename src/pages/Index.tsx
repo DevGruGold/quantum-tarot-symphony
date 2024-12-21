@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import BirthDateInput from '@/components/BirthDateInput';
-import QuantumWave from '@/components/QuantumWave';
 import TarotCard from '@/components/TarotCard';
-import { drawCard, TarotCard as TarotCardType } from '@/utils/tarotData';
+import QuantumWave from '@/components/QuantumWave';
+import { drawCard } from '@/utils/tarotData';
 import { toast } from '@/components/ui/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const PHI = 1.618033988749895;
 
@@ -15,6 +16,7 @@ const positions = [
     x: 100, 
     y: 200, 
     color: '#EC4899',
+    description: 'Past influences, foundation, root causes'
   },
   { 
     id: 'present', 
@@ -22,6 +24,7 @@ const positions = [
     x: 400, 
     y: 150, 
     color: '#8B5CF6',
+    description: 'Current situation, immediate influences'
   },
   { 
     id: 'future', 
@@ -29,6 +32,7 @@ const positions = [
     x: 700, 
     y: 200, 
     color: '#14B8A6',
+    description: 'Potential outcomes, emerging energies'
   }
 ];
 
@@ -37,7 +41,19 @@ const Index = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [time, setTime] = useState(0);
   const [revealedCards, setRevealedCards] = useState<string[]>([]);
-  const [drawnCards, setDrawnCards] = useState<Record<string, TarotCardType>>({});
+  const [drawnCards, setDrawnCards] = useState<Record<string, any>>({});
+  const isMobile = useIsMobile();
+
+  // Adjust positions for mobile
+  const getMobilePosition = (pos: typeof positions[0]) => {
+    if (!isMobile) return pos;
+    const mobilePositions = {
+      past: { x: 20, y: 150 },
+      present: { x: 120, y: 100 },
+      future: { x: 220, y: 150 }
+    };
+    return { ...pos, ...mobilePositions[pos.id as keyof typeof mobilePositions] };
+  };
 
   useEffect(() => {
     let frameId: number;
@@ -55,7 +71,7 @@ const Index = () => {
     setBirthDate(date);
     setIsRunning(true);
     // Draw initial cards but don't reveal them
-    const initialCards: Record<string, TarotCardType> = {};
+    const initialCards: Record<string, any> = {};
     positions.forEach(pos => {
       initialCards[pos.id] = drawCard();
     });
@@ -89,49 +105,101 @@ const Index = () => {
         animate={{ opacity: 1 }}
         className="max-w-6xl mx-auto relative"
       >
+        {/* Reality Layer Animations */}
+        <motion.div 
+          className="absolute inset-0 opacity-20"
+          animate={{ 
+            scale: [1, 1.1, 1],
+            rotate: [0, 360],
+          }}
+          transition={{ 
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-pink-500/30 via-purple-500/30 to-teal-500/30 quantum-spin" />
+        </motion.div>
+
         <div className="absolute inset-0">
-          <svg width="100%" height="600" className="absolute inset-0">
-            {positions.map(pos => (
-              <QuantumWave
-                key={pos.id}
-                startX={pos.x}
-                startY={pos.y + 150}
-                frequency={pos.frequency}
-                color={pos.color}
-                time={time}
-              />
+          <svg width="100%" height={isMobile ? "400" : "600"} className="absolute inset-0">
+            {/* Quantum Connection Lines */}
+            {positions.map((pos, i) => (
+              positions.slice(i + 1).map((nextPos, j) => {
+                const start = getMobilePosition(pos);
+                const end = getMobilePosition(nextPos);
+                return (
+                  <motion.line
+                    key={`${pos.id}-${nextPos.id}`}
+                    x1={start.x + 30}
+                    y1={start.y + 40}
+                    x2={end.x + 30}
+                    y2={end.y + 40}
+                    stroke="#4B5563"
+                    strokeWidth="1"
+                    strokeDasharray="5,5"
+                    opacity="0.3"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
+                );
+              })
             ))}
+
+            {/* Quantum Waves */}
+            {positions.map(pos => {
+              const adjustedPos = getMobilePosition(pos);
+              return (
+                <QuantumWave
+                  key={`wave-${pos.id}`}
+                  startX={adjustedPos.x - 20}
+                  startY={adjustedPos.y + 40}
+                  frequency={pos.frequency}
+                  color={pos.color}
+                  time={time}
+                />
+              );
+            })}
           </svg>
         </div>
 
+        {/* Tarot Cards */}
         <div className="relative pt-20">
-          {positions.map((pos) => (
-            <TarotCard
-              key={pos.id}
-              position={pos.id}
-              color={pos.color}
-              x={pos.x}
-              y={pos.y}
-              frequency={pos.frequency}
-              isRevealed={revealedCards.includes(pos.id)}
-              card={drawnCards[pos.id]}
-              onClick={() => handleCardClick(pos.id)}
-            />
-          ))}
+          {positions.map((pos) => {
+            const adjustedPos = getMobilePosition(pos);
+            return (
+              <TarotCard
+                key={pos.id}
+                position={pos.id}
+                color={pos.color}
+                x={adjustedPos.x}
+                y={adjustedPos.y}
+                frequency={pos.frequency}
+                isRevealed={revealedCards.includes(pos.id)}
+                card={drawnCards[pos.id]}
+                onClick={() => handleCardClick(pos.id)}
+              />
+            );
+          })}
         </div>
 
-        <div className="absolute bottom-4 left-4 right-4">
-          <div className="bg-gray-800/80 p-4 rounded-lg backdrop-blur-sm">
-            <div className="text-sm text-gray-300">
-              <div className="font-bold mb-2">Quantum-Tarot Frequencies:</div>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-pink-400">Past: 1/φ Hz</div>
-                <div className="text-purple-400">Present: 1 Hz</div>
-                <div className="text-teal-400">Future: φ Hz</div>
-              </div>
+        {/* Information Panel */}
+        <motion.div 
+          className="fixed bottom-4 left-4 right-4 bg-gray-800/80 p-4 rounded-lg backdrop-blur-sm"
+          initial={{ y: 100 }}
+          animate={{ y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <div className="text-sm text-gray-300">
+            <div className="font-bold mb-2">Quantum-Tarot Frequencies:</div>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-pink-400">Past: 1/φ Hz</div>
+              <div className="text-purple-400">Present: 1 Hz</div>
+              <div className="text-teal-400">Future: φ Hz</div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </motion.div>
     </div>
   );
