@@ -1,6 +1,7 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import FrequencyGuide from './FrequencyGuide';
 
 interface BirthDateInputProps {
   onStart: (date: string) => void;
@@ -22,6 +23,8 @@ const BirthDateInput = ({ onStart }: BirthDateInputProps) => {
         <div className="text-4xl font-bold text-center mb-2">🌟 Quantum Tarot</div>
         <div className="text-xl text-center text-muted-foreground">Enter your birth date to begin the quantum journey</div>
       </div>
+      
+      <FrequencyGuide />
       
       <form onSubmit={handleSubmit} className="w-full max-w-md space-y-4">
         <Input
