@@ -9,7 +9,13 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 const PHI = 1.618033988749895;
 
-const positions = [
+interface BirthDates {
+  date1?: string;
+  date2?: string;
+}
+
+// Move positions configuration to a separate constant
+const POSITIONS = [
   { 
     id: 'past', 
     frequency: 1/PHI, 
@@ -37,7 +43,7 @@ const positions = [
 ];
 
 const Index = () => {
-  const [birthDate, setBirthDate] = useState<string | null>(null);
+  const [birthDates, setBirthDates] = useState<BirthDates | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [time, setTime] = useState(0);
   const [revealedCards, setRevealedCards] = useState<string[]>([]);
@@ -45,7 +51,7 @@ const Index = () => {
   const isMobile = useIsMobile();
 
   // Adjust positions for mobile
-  const getMobilePosition = (pos: typeof positions[0]) => {
+  const getMobilePosition = (pos: typeof POSITIONS[0]) => {
     if (!isMobile) return pos;
     const mobilePositions = {
       past: { x: 20, y: 150 },
@@ -67,19 +73,20 @@ const Index = () => {
     return () => cancelAnimationFrame(frameId);
   }, [isRunning]);
 
-  const handleStart = (date: string) => {
-    setBirthDate(date);
+  const handleStart = (dates: BirthDates) => {
+    setBirthDates(dates);
     setIsRunning(true);
-    // Draw initial cards but don't reveal them
     const initialCards: Record<string, any> = {};
-    positions.forEach(pos => {
+    POSITIONS.forEach(pos => {
       initialCards[pos.id] = drawCard();
     });
     setDrawnCards(initialCards);
     
+    const peopleCount = Object.values(dates).filter(Boolean).length;
     toast({
       title: "Quantum Entanglement Initiated",
-      description: "The cards have been drawn. Click each to reveal your reading.",
+      description: `Reading initialized for ${peopleCount === 0 ? 'general guidance' : 
+        peopleCount === 1 ? 'personal guidance' : 'relationship guidance'}. Click each card to reveal your reading.`,
     });
   };
 
@@ -94,7 +101,7 @@ const Index = () => {
     }
   };
 
-  if (!birthDate) {
+  if (!birthDates) {
     return <BirthDateInput onStart={handleStart} />;
   }
 
@@ -124,8 +131,8 @@ const Index = () => {
         <div className="absolute inset-0">
           <svg width="100%" height={isMobile ? "400" : "600"} className="absolute inset-0">
             {/* Quantum Connection Lines */}
-            {positions.map((pos, i) => (
-              positions.slice(i + 1).map((nextPos, j) => {
+            {POSITIONS.map((pos, i) => (
+              POSITIONS.slice(i + 1).map((nextPos, j) => {
                 const start = getMobilePosition(pos);
                 const end = getMobilePosition(nextPos);
                 return (
@@ -148,7 +155,7 @@ const Index = () => {
             ))}
 
             {/* Quantum Waves */}
-            {positions.map(pos => {
+            {POSITIONS.map(pos => {
               const adjustedPos = getMobilePosition(pos);
               return (
                 <QuantumWave
@@ -166,7 +173,7 @@ const Index = () => {
 
         {/* Tarot Cards */}
         <div className="relative pt-20">
-          {positions.map((pos) => {
+          {POSITIONS.map((pos) => {
             const adjustedPos = getMobilePosition(pos);
             return (
               <TarotCard
