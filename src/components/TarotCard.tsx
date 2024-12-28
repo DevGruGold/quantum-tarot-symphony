@@ -5,6 +5,7 @@ import { calculateQuantumResonance } from '@/utils/tarotData';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import QuantumAudio from './QuantumAudio';
+import ResonanceProgress from './ResonanceProgress';
 
 interface TarotCardProps {
   position: string;
@@ -20,24 +21,41 @@ interface TarotCardProps {
 const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick }: TarotCardProps) => {
   const [resonance, setResonance] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [canReveal, setCanReveal] = useState(false);
 
   useEffect(() => {
     if (card) {
-      setResonance(calculateQuantumResonance(frequency, card));
+      const newResonance = calculateQuantumResonance(frequency, card);
+      setResonance(newResonance);
+      setCanReveal(newResonance >= 1);
     }
   }, [frequency, card]);
 
+  const handleClick = () => {
+    if (!isRevealed && !canReveal) {
+      toast({
+        title: "Resonance Not Achieved",
+        description: "Focus your thoughts to achieve 100% resonance before revealing the card.",
+        variant: "destructive"
+      });
+      return;
+    }
+    onClick();
+  };
+
   const handleHover = () => {
     setIsHovered(true);
-    toast({
-      title: `${position.charAt(0).toUpperCase() + position.slice(1)} Frequency Guide`,
-      description: `Current resonance: ${(resonance * 100).toFixed(1)}%. ${
-        resonance < 0.5 
-          ? "Focus your thoughts to align with this timeline's frequency." 
-          : "Your thoughts are harmonizing well with this position."
-      }`,
-      duration: 2000,
-    });
+    if (!isRevealed) {
+      toast({
+        title: `${position.charAt(0).toUpperCase() + position.slice(1)} Frequency Guide`,
+        description: `Current resonance: ${(resonance * 100).toFixed(1)}%. ${
+          resonance < 1 
+            ? "Focus your thoughts to align with this timeline's frequency." 
+            : "Your thoughts are harmonizing perfectly with this position."
+        }`,
+        duration: 2000,
+      });
+    }
   };
 
   const getCardArtwork = (cardName: string) => {
@@ -77,7 +95,7 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
         className="absolute cursor-pointer"
         style={{ top: y, left: x }}
         whileHover={{ scale: 1.1 }}
-        onClick={onClick}
+        onClick={handleClick}
         onHoverStart={handleHover}
         onHoverEnd={() => setIsHovered(false)}
       >
@@ -127,8 +145,6 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
                     {position.charAt(0).toUpperCase() + position.slice(1)}
                     <br />
                     Frequency: {frequency.toFixed(3)}φ
-                    <br />
-                    Resonance: {(resonance * 100).toFixed(1)}%
                   </div>
                 </div>
               )}
@@ -142,9 +158,9 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
                 border: `2px solid ${color}40`
               }}
             >
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
                 <motion.div 
-                  className="text-6xl quantum-pulse"
+                  className="text-6xl quantum-pulse mb-4"
                   animate={{
                     scale: [1, 1.2, 1],
                     opacity: [0.7, 1, 0.7]
@@ -157,6 +173,7 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
                 >
                   ✨
                 </motion.div>
+                <ResonanceProgress resonance={resonance} color={color} />
               </div>
             </div>
           </motion.div>
