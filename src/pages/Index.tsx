@@ -3,9 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import BirthDateInput from '@/components/BirthDateInput';
 import TarotCard from '@/components/TarotCard';
 import QuantumWave from '@/components/QuantumWave';
-import { drawCard } from '@/utils/tarotData';
+import { drawMinorArcana, drawMajorArcana, getCombinedReading } from '@/utils/tarotData';
 import { toast } from '@/components/ui/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Card, CardContent } from '@/components/ui/card';
 
 const PHI = 1.618033988749895;
 
@@ -14,31 +15,38 @@ interface BirthDates {
   date2?: string;
 }
 
-// Move positions configuration to a separate constant
 const POSITIONS = [
   { 
-    id: 'past', 
+    id: 'foundation', 
     frequency: 1/PHI, 
     x: 100, 
     y: 200, 
     color: '#EC4899',
-    description: 'Past influences, foundation, root causes'
+    description: 'Foundation and current influences'
   },
   { 
-    id: 'present', 
+    id: 'path', 
     frequency: 1, 
-    x: 400, 
+    x: 300, 
     y: 150, 
     color: '#8B5CF6',
-    description: 'Current situation, immediate influences'
+    description: 'Path ahead and opportunities'
   },
   { 
-    id: 'future', 
+    id: 'challenge', 
     frequency: PHI, 
+    x: 500, 
+    y: 150, 
+    color: '#14B8A6',
+    description: 'Challenges and obstacles'
+  },
+  { 
+    id: 'outcome', 
+    frequency: PHI * PHI, 
     x: 700, 
     y: 200, 
-    color: '#14B8A6',
-    description: 'Potential outcomes, emerging energies'
+    color: '#F59E0B',
+    description: 'Final outcome (Major Arcana)'
   }
 ];
 
@@ -54,9 +62,10 @@ const Index = () => {
   const getMobilePosition = (pos: typeof POSITIONS[0]) => {
     if (!isMobile) return pos;
     const mobilePositions = {
-      past: { x: 20, y: 150 },
-      present: { x: 120, y: 100 },
-      future: { x: 220, y: 150 }
+      foundation: { x: 20, y: 150 },
+      path: { x: 120, y: 100 },
+      challenge: { x: 220, y: 100 },
+      outcome: { x: 320, y: 150 }
     };
     return { ...pos, ...mobilePositions[pos.id as keyof typeof mobilePositions] };
   };
@@ -78,7 +87,7 @@ const Index = () => {
     setIsRunning(true);
     const initialCards: Record<string, any> = {};
     POSITIONS.forEach(pos => {
-      initialCards[pos.id] = drawCard();
+      initialCards[pos.id] = pos.id === 'outcome' ? drawMajorArcana() : drawMinorArcana();
     });
     setDrawnCards(initialCards);
     
@@ -98,6 +107,17 @@ const Index = () => {
         title: `${id.charAt(0).toUpperCase() + id.slice(1)} Card Revealed`,
         description: `${drawnCards[id].name} - ${drawnCards[id].isReversed ? 'Reversed' : 'Upright'}`,
       });
+
+      // Show combined reading when all cards are revealed
+      if (revealedCards.length === POSITIONS.length - 1) {
+        setTimeout(() => {
+          toast({
+            title: "Complete Reading",
+            description: getCombinedReading(drawnCards),
+            duration: 10000,
+          });
+        }, 1000);
+      }
     }
   };
 
@@ -171,42 +191,43 @@ const Index = () => {
           </svg>
         </div>
 
-        {/* Tarot Cards */}
-        <div className="relative pt-20">
-          {POSITIONS.map((pos) => {
-            const adjustedPos = getMobilePosition(pos);
-            return (
-              <TarotCard
-                key={pos.id}
-                position={pos.id}
-                color={pos.color}
-                x={adjustedPos.x}
-                y={adjustedPos.y}
-                frequency={pos.frequency}
-                isRevealed={revealedCards.includes(pos.id)}
-                card={drawnCards[pos.id]}
-                onClick={() => handleCardClick(pos.id)}
-              />
-            );
-          })}
-        </div>
+      {/* Tarot Cards */}
+      <div className="relative pt-20">
+        {POSITIONS.map((pos) => {
+          const adjustedPos = getMobilePosition(pos);
+          return (
+            <TarotCard
+              key={pos.id}
+              position={pos.id}
+              color={pos.color}
+              x={adjustedPos.x}
+              y={adjustedPos.y}
+              frequency={pos.frequency}
+              isRevealed={revealedCards.includes(pos.id)}
+              card={drawnCards[pos.id]}
+              onClick={() => handleCardClick(pos.id)}
+            />
+          );
+        })}
+      </div>
 
-        {/* Information Panel */}
-        <motion.div 
-          className="fixed bottom-4 left-4 right-4 bg-gray-800/80 p-4 rounded-lg backdrop-blur-sm"
-          initial={{ y: 100 }}
-          animate={{ y: 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          <div className="text-sm text-gray-300">
-            <div className="font-bold mb-2">Quantum-Tarot Frequencies:</div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-pink-400">Past: 1/φ Hz</div>
-              <div className="text-purple-400">Present: 1 Hz</div>
-              <div className="text-teal-400">Future: φ Hz</div>
-            </div>
+      {/* Information Panel */}
+      <motion.div 
+        className="fixed bottom-4 left-4 right-4 bg-gray-800/80 p-4 rounded-lg backdrop-blur-sm"
+        initial={{ y: 100 }}
+        animate={{ y: 0 }}
+        transition={{ delay: 0.5 }}
+      >
+        <div className="text-sm text-gray-300">
+          <div className="font-bold mb-2">Reading Guide:</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {POSITIONS.map(pos => (
+              <div key={pos.id} style={{ color: pos.color }}>
+                {pos.id.charAt(0).toUpperCase() + pos.id.slice(1)}: {pos.description}
+              </div>
+            ))}
           </div>
-        </motion.div>
+        </div>
       </motion.div>
     </div>
   );
