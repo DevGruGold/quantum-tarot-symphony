@@ -12,26 +12,60 @@ const ResonanceProgress = ({ resonance, color }: ResonanceProgressProps) => {
   
   return (
     <div className="w-full space-y-2">
-      <div className="flex justify-between text-sm">
-        <span>Resonance</span>
-        <span style={{ color }}>{percentage.toFixed(1)}%</span>
+      <div className="flex justify-between text-sm font-semibold">
+        <span>Thought Focus</span>
+        <motion.span 
+          style={{ color }}
+          animate={{ 
+            opacity: percentage < 100 ? [0.5, 1, 0.5] : 1 
+          }}
+          transition={{ 
+            duration: 2, 
+            repeat: Infinity 
+          }}
+        >
+          {percentage.toFixed(1)}%
+        </motion.span>
       </div>
       <Progress 
         value={percentage} 
-        className="h-2"
+        className="h-3 relative overflow-hidden"
         style={{
-          '--progress-background': color + '40',
-          '--progress-foreground': color
-        } as React.CSSProperties}
-      />
+          background: `${color}20`,
+        }}
+      >
+        <motion.div 
+          className="absolute inset-0 rounded-full"
+          style={{
+            background: color,
+            width: `${percentage}%`,
+          }}
+          animate={{
+            opacity: [0.6, 1, 0.6]
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity
+          }}
+        />
+      </Progress>
       {percentage >= 100 && (
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-sm text-center"
+          className="text-sm text-center font-medium"
           style={{ color }}
         >
-          ✨ Perfect Resonance Achieved
+          ✨ Ready to Reveal
+        </motion.div>
+      )}
+      {percentage < 100 && (
+        <motion.div 
+          className="text-sm text-center text-gray-400"
+          animate={{ opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          Focus your thoughts to align...
         </motion.div>
       )}
     </div>
