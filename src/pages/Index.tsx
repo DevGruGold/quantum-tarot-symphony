@@ -191,43 +191,44 @@ const Index = () => {
           </svg>
         </div>
 
-      {/* Tarot Cards */}
-      <div className="relative pt-20">
-        {POSITIONS.map((pos) => {
-          const adjustedPos = getMobilePosition(pos);
-          return (
-            <TarotCard
-              key={pos.id}
-              position={pos.id}
-              color={pos.color}
-              x={adjustedPos.x}
-              y={adjustedPos.y}
-              frequency={pos.frequency}
-              isRevealed={revealedCards.includes(pos.id)}
-              card={drawnCards[pos.id]}
-              onClick={() => handleCardClick(pos.id)}
-            />
-          );
-        })}
-      </div>
-
-      {/* Information Panel */}
-      <motion.div 
-        className="fixed bottom-4 left-4 right-4 bg-gray-800/80 p-4 rounded-lg backdrop-blur-sm"
-        initial={{ y: 100 }}
-        animate={{ y: 0 }}
-        transition={{ delay: 0.5 }}
-      >
-        <div className="text-sm text-gray-300">
-          <div className="font-bold mb-2">Reading Guide:</div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {POSITIONS.map(pos => (
-              <div key={pos.id} style={{ color: pos.color }}>
-                {pos.id.charAt(0).toUpperCase() + pos.id.slice(1)}: {pos.description}
-              </div>
-            ))}
-          </div>
+        {/* Tarot Cards */}
+        <div className="relative pt-20">
+          {POSITIONS.map((pos) => {
+            const adjustedPos = getMobilePosition(pos);
+            return (
+              <TarotCard
+                key={pos.id}
+                position={pos.id}
+                color={pos.color}
+                x={adjustedPos.x}
+                y={adjustedPos.y}
+                frequency={pos.frequency}
+                isRevealed={revealedCards.includes(pos.id)}
+                card={drawnCards[pos.id]}
+                onClick={() => handleCardClick(pos.id)}
+              />
+            );
+          })}
         </div>
+
+        {/* Information Panel */}
+        <motion.div 
+          className="fixed bottom-4 left-4 right-4 bg-gray-800/80 p-4 rounded-lg backdrop-blur-sm"
+          initial={{ y: 100 }}
+          animate={{ y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <div className="text-sm text-gray-300">
+            <div className="font-bold mb-2">Reading Guide:</div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {POSITIONS.map(pos => (
+                <div key={pos.id} style={{ color: pos.color }}>
+                  {pos.id.charAt(0).toUpperCase() + pos.id.slice(1)}: {pos.description}
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
       </motion.div>
     </div>
   );
