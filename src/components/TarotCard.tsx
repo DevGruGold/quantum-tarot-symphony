@@ -24,13 +24,31 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
   const [canReveal, setCanReveal] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(false);
 
+  // Add resonance increase effect while pressed
   useEffect(() => {
-    if (card) {
-      const newResonance = calculateQuantumResonance(frequency, card);
-      setResonance(newResonance);
-      setCanReveal(newResonance >= 1);
+    let intervalId: number;
+    if (isPressed && !isRevealed && !canReveal) {
+      intervalId = window.setInterval(() => {
+        setResonance(prev => {
+          const newValue = Math.min(prev + 0.05, 1);
+          if (newValue >= 1) {
+            setCanReveal(true);
+            toast({
+              title: "✨ Resonance Achieved!",
+              description: "The card is ready to be revealed. Tap it to see your reading.",
+            });
+          }
+          return newValue;
+        });
+      }, 100); // Increase every 100ms
+    } else if (!isPressed && !isRevealed) {
+      // Slowly decrease resonance when not pressed
+      intervalId = window.setInterval(() => {
+        setResonance(prev => Math.max(prev - 0.03, 0));
+      }, 100);
     }
-  }, [frequency, card]);
+    return () => window.clearInterval(intervalId);
+  }, [isPressed, isRevealed, canReveal]);
 
   const handleClick = () => {
     if (!isRevealed && !canReveal) {
