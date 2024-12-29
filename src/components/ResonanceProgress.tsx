@@ -5,9 +5,10 @@ import { motion } from 'framer-motion';
 interface ResonanceProgressProps {
   resonance: number;
   color: string;
+  isActive: boolean;
 }
 
-const ResonanceProgress = ({ resonance, color }: ResonanceProgressProps) => {
+const ResonanceProgress = ({ resonance, color, isActive }: ResonanceProgressProps) => {
   const percentage = resonance * 100;
   
   return (
@@ -17,7 +18,7 @@ const ResonanceProgress = ({ resonance, color }: ResonanceProgressProps) => {
         <motion.span 
           style={{ color }}
           animate={{ 
-            opacity: percentage < 100 ? [0.5, 1, 0.5] : 1 
+            opacity: isActive ? [0.5, 1, 0.5] : 1 
           }}
           transition={{ 
             duration: 2, 
@@ -41,7 +42,7 @@ const ResonanceProgress = ({ resonance, color }: ResonanceProgressProps) => {
             width: `${percentage}%`,
           }}
           animate={{
-            opacity: [0.6, 1, 0.6]
+            opacity: isActive ? [0.6, 1, 0.6] : 0.8
           }}
           transition={{
             duration: 2,
@@ -63,10 +64,10 @@ const ResonanceProgress = ({ resonance, color }: ResonanceProgressProps) => {
         <motion.div 
           className="text-sm text-center"
           style={{ color }}
-          animate={{ opacity: [0.5, 1, 0.5] }}
+          animate={{ opacity: isActive ? [0.5, 1, 0.5] : 0.8 }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          Hover and listen to align your thoughts...
+          Hold to focus your thoughts...
         </motion.div>
       )}
     </div>

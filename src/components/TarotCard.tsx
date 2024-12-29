@@ -20,7 +20,7 @@ interface TarotCardProps {
 
 const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick }: TarotCardProps) => {
   const [resonance, setResonance] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
   const [canReveal, setCanReveal] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(false);
 
@@ -36,7 +36,7 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
     if (!isRevealed && !canReveal) {
       toast({
         title: "Resonance Not Achieved",
-        description: "Focus your thoughts to achieve 100% resonance before revealing the card. Hover over the card and listen to the frequency to align your thoughts.",
+        description: "Hold your finger on the card and focus your thoughts until 100% resonance is achieved.",
         variant: "destructive"
       });
       return;
@@ -44,16 +44,21 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
     onClick();
   };
 
-  const handleHover = () => {
-    setIsHovered(true);
+  const handlePressStart = () => {
+    setIsPressed(true);
     setAudioEnabled(true);
     if (!isRevealed) {
       toast({
         title: `${position.charAt(0).toUpperCase() + position.slice(1)} Frequency Guide`,
-        description: `Current resonance: ${(resonance * 100).toFixed(1)}%. Listen to the frequency and focus your thoughts to align with this timeline.`,
+        description: `Hold and focus. Current resonance: ${(resonance * 100).toFixed(1)}%. Listen to the frequency to align with this timeline.`,
         duration: 3000,
       });
     }
+  };
+
+  const handlePressEnd = () => {
+    setIsPressed(false);
+    setAudioEnabled(false);
   };
 
   const getCardArtwork = (cardName: string) => {
@@ -88,17 +93,17 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
 
   return (
     <>
-      <QuantumAudio frequency={frequency} isPlaying={audioEnabled && isHovered} />
+      <QuantumAudio frequency={frequency} isPlaying={audioEnabled && isPressed} />
       <motion.div
-        className="absolute cursor-pointer"
+        className="absolute touch-none"
         style={{ top: y, left: x }}
-        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 1.1 }}
+        onTouchStart={handlePressStart}
+        onTouchEnd={handlePressEnd}
+        onMouseDown={handlePressStart}
+        onMouseUp={handlePressEnd}
+        onMouseLeave={handlePressEnd}
         onClick={handleClick}
-        onHoverStart={handleHover}
-        onHoverEnd={() => {
-          setIsHovered(false);
-          setAudioEnabled(false);
-        }}
       >
         <AnimatePresence mode="wait">
           <motion.div 
@@ -124,7 +129,7 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
                 transform: isRevealed ? 'rotateY(0deg)' : 'rotateY(180deg)',
                 backfaceVisibility: 'hidden'
               }}
-              animate={isHovered ? {
+              animate={isPressed ? {
                 boxShadow: [
                   `0 0 ${20 + resonance * 20}px ${color}${Math.floor(resonance * 100)}`,
                   `0 0 ${40 + resonance * 40}px ${color}${Math.floor(resonance * 100)}`,
@@ -176,7 +181,7 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
                 >
                   ✨
                 </motion.div>
-                <ResonanceProgress resonance={resonance} color={color} />
+                <ResonanceProgress resonance={resonance} color={color} isActive={isPressed} />
               </div>
             </div>
           </motion.div>
