@@ -29,7 +29,7 @@ const ResonanceProgress = ({ resonance, color }: ResonanceProgressProps) => {
       </div>
       <Progress 
         value={percentage} 
-        className="h-3 relative overflow-hidden"
+        className="h-4 relative overflow-hidden"
         style={{
           background: `${color}20`,
         }}
@@ -37,7 +37,7 @@ const ResonanceProgress = ({ resonance, color }: ResonanceProgressProps) => {
         <motion.div 
           className="absolute inset-0 rounded-full"
           style={{
-            background: color,
+            background: `linear-gradient(90deg, ${color}80, ${color})`,
             width: `${percentage}%`,
           }}
           animate={{
@@ -61,11 +61,12 @@ const ResonanceProgress = ({ resonance, color }: ResonanceProgressProps) => {
       )}
       {percentage < 100 && (
         <motion.div 
-          className="text-sm text-center text-gray-400"
+          className="text-sm text-center"
+          style={{ color }}
           animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          Focus your thoughts to align...
+          Hover and listen to align your thoughts...
         </motion.div>
       )}
     </div>

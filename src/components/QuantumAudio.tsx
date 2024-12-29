@@ -11,39 +11,38 @@ const QuantumAudio = ({ frequency, isPlaying }: QuantumAudioProps) => {
   const gainNodeRef = useRef<GainNode | null>(null);
 
   useEffect(() => {
-    // Initialize audio context on first interaction
-    const initAudio = () => {
-      if (!audioContextRef.current) {
-        audioContextRef.current = new AudioContext();
-        gainNodeRef.current = audioContextRef.current.createGain();
-        gainNodeRef.current.connect(audioContextRef.current.destination);
-        gainNodeRef.current.gain.value = 0.1; // Set volume to 10%
-        
-        // Remove the click event listener after initialization
-        document.removeEventListener('click', initAudio);
-      }
-    };
+    // Initialize audio context
+    if (!audioContextRef.current) {
+      audioContextRef.current = new AudioContext();
+      gainNodeRef.current = audioContextRef.current.createGain();
+      gainNodeRef.current.connect(audioContextRef.current.destination);
+      gainNodeRef.current.gain.value = 0.15; // Set volume to 15%
+    }
 
-    document.addEventListener('click', initAudio);
-    return () => document.removeEventListener('click', initAudio);
-  }, []);
-
-  useEffect(() => {
-    if (!audioContextRef.current || !gainNodeRef.current) return;
-
-    if (isPlaying) {
+    if (isPlaying && audioContextRef.current && gainNodeRef.current) {
       // Create and configure oscillator
       oscillatorRef.current = audioContextRef.current.createOscillator();
       oscillatorRef.current.type = 'sine';
-      oscillatorRef.current.frequency.value = 220 * frequency; // Base frequency * quantum frequency
+      // Map frequency to audible range (220-880Hz)
+      oscillatorRef.current.frequency.value = 220 + (frequency * 220);
       oscillatorRef.current.connect(gainNodeRef.current);
+      
+      // Smooth start
+      gainNodeRef.current.gain.setValueAtTime(0, audioContextRef.current.currentTime);
+      gainNodeRef.current.gain.linearRampToValueAtTime(0.15, audioContextRef.current.currentTime + 0.1);
+      
       oscillatorRef.current.start();
     } else {
-      // Stop and cleanup oscillator
-      if (oscillatorRef.current) {
-        oscillatorRef.current.stop();
-        oscillatorRef.current.disconnect();
-        oscillatorRef.current = null;
+      // Smooth stop and cleanup
+      if (oscillatorRef.current && gainNodeRef.current && audioContextRef.current) {
+        gainNodeRef.current.gain.linearRampToValueAtTime(0, audioContextRef.current.currentTime + 0.1);
+        setTimeout(() => {
+          if (oscillatorRef.current) {
+            oscillatorRef.current.stop();
+            oscillatorRef.current.disconnect();
+            oscillatorRef.current = null;
+          }
+        }, 100);
       }
     }
 
@@ -56,7 +55,7 @@ const QuantumAudio = ({ frequency, isPlaying }: QuantumAudioProps) => {
     };
   }, [isPlaying, frequency]);
 
-  return null; // Audio component doesn't render anything
+  return null;
 };
 
 export default QuantumAudio;

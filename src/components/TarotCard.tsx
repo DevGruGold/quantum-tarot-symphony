@@ -22,6 +22,7 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
   const [resonance, setResonance] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [canReveal, setCanReveal] = useState(false);
+  const [audioEnabled, setAudioEnabled] = useState(false);
 
   useEffect(() => {
     if (card) {
@@ -35,7 +36,7 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
     if (!isRevealed && !canReveal) {
       toast({
         title: "Resonance Not Achieved",
-        description: "Focus your thoughts to achieve 100% resonance before revealing the card.",
+        description: "Focus your thoughts to achieve 100% resonance before revealing the card. Hover over the card and listen to the frequency to align your thoughts.",
         variant: "destructive"
       });
       return;
@@ -45,15 +46,12 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
 
   const handleHover = () => {
     setIsHovered(true);
+    setAudioEnabled(true);
     if (!isRevealed) {
       toast({
         title: `${position.charAt(0).toUpperCase() + position.slice(1)} Frequency Guide`,
-        description: `Current resonance: ${(resonance * 100).toFixed(1)}%. ${
-          resonance < 1 
-            ? "Focus your thoughts to align with this timeline's frequency." 
-            : "Your thoughts are harmonizing perfectly with this position."
-        }`,
-        duration: 2000,
+        description: `Current resonance: ${(resonance * 100).toFixed(1)}%. Listen to the frequency and focus your thoughts to align with this timeline.`,
+        duration: 3000,
       });
     }
   };
@@ -90,14 +88,17 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
 
   return (
     <>
-      <QuantumAudio frequency={frequency} isPlaying={isHovered} />
+      <QuantumAudio frequency={frequency} isPlaying={audioEnabled && isHovered} />
       <motion.div
         className="absolute cursor-pointer"
         style={{ top: y, left: x }}
         whileHover={{ scale: 1.1 }}
         onClick={handleClick}
         onHoverStart={handleHover}
-        onHoverEnd={() => setIsHovered(false)}
+        onHoverEnd={() => {
+          setIsHovered(false);
+          setAudioEnabled(false);
+        }}
       >
         <AnimatePresence mode="wait">
           <motion.div 
@@ -111,6 +112,7 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
               perspective: '1000px'
             }}
           >
+            {/* Front of card (revealed state) */}
             <motion.div 
               className={cn(
                 "absolute inset-0 rounded-lg flex flex-col items-center justify-center",
@@ -150,6 +152,7 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
               )}
             </motion.div>
             
+            {/* Back of card (unrevealed state) */}
             <div 
               className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg"
               style={{
