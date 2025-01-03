@@ -10,6 +10,8 @@ interface TarotSpreadProps {
     frequency: number;
     color: string;
     description: string;
+    x: number;
+    y: number;
   }>;
   drawnCards: Record<string, TarotCardType>;
   revealedCards: string[];

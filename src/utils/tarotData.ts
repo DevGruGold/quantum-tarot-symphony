@@ -6,35 +6,38 @@ export interface TarotCard {
   type: 'major' | 'minor';
   suit?: string;
   element?: string;
+  keywords: string[];
 }
 
 // Major Arcana
+
+// Update majorArcana array to include keywords
 const majorArcana: TarotCard[] = [
-  { name: "The Fool", meaning: "New beginnings, spontaneity, faith, apparent folly", reverseChance: 0.5, type: 'major' },
-  { name: "The Magician", meaning: "Manifestation, resourcefulness, power, skill", reverseChance: 0.5, type: 'major' },
-  { name: "The High Priestess", meaning: "Intuition, mystery, spiritual insight, divine knowledge", reverseChance: 0.5, type: 'major' },
-  { name: "The Empress", meaning: "Fertility, nurturing, abundance, nature connection", reverseChance: 0.5, type: 'major' },
-  { name: "The Emperor", meaning: "Authority, structure, control, fatherhood", reverseChance: 0.5, type: 'major' },
-  { name: "The Hierophant", meaning: "Tradition, conformity, morality, ethics", reverseChance: 0.5, type: 'major' },
-  { name: "The Lovers", meaning: "Love, harmony, relationships, choices", reverseChance: 0.5, type: 'major' },
-  { name: "The Chariot", meaning: "Control, willpower, determination, success", reverseChance: 0.5, type: 'major' },
-  { name: "Strength", meaning: "Courage, patience, control, compassion", reverseChance: 0.5, type: 'major' },
-  { name: "The Hermit", meaning: "Soul-searching, introspection, inner guidance", reverseChance: 0.5, type: 'major' },
-  { name: "Wheel of Fortune", meaning: "Change, cycles, inevitable fate, turning point", reverseChance: 0.5, type: 'major' },
-  { name: "Justice", meaning: "Justice, fairness, truth, cause and effect", reverseChance: 0.5, type: 'major' },
-  { name: "The Hanged Man", meaning: "Surrender, letting go, new perspective", reverseChance: 0.5, type: 'major' },
-  { name: "Death", meaning: "Endings, change, transformation, transition", reverseChance: 0.5, type: 'major' },
-  { name: "Temperance", meaning: "Balance, moderation, patience, purpose", reverseChance: 0.5, type: 'major' },
-  { name: "The Devil", meaning: "Shadow self, attachment, addiction, restriction", reverseChance: 0.5, type: 'major' },
-  { name: "The Tower", meaning: "Sudden change, upheaval, chaos, revelation", reverseChance: 0.5, type: 'major' },
-  { name: "The Star", meaning: "Hope, faith, purpose, renewal, spirituality", reverseChance: 0.5, type: 'major' },
-  { name: "The Moon", meaning: "Illusion, fear, anxiety, subconscious, intuition", reverseChance: 0.5, type: 'major' },
-  { name: "The Sun", meaning: "Joy, success, celebration, positivity", reverseChance: 0.5, type: 'major' },
-  { name: "Judgement", meaning: "Rebirth, inner calling, absolution", reverseChance: 0.5, type: 'major' },
-  { name: "The World", meaning: "Completion, integration, accomplishment, travel", reverseChance: 0.5, type: 'major' }
+  { name: "The Fool", meaning: "New beginnings, spontaneity, faith, apparent folly", reverseChance: 0.5, type: 'major', keywords: ["beginnings", "spontaneity", "faith"] },
+  { name: "The Magician", meaning: "Manifestation, resourcefulness, power, skill", reverseChance: 0.5, type: 'major', keywords: ["manifestation", "power", "skill"] },
+  { name: "The High Priestess", meaning: "Intuition, mystery, spiritual insight, divine knowledge", reverseChance: 0.5, type: 'major', keywords: ["intuition", "mystery", "insight"] },
+  { name: "The Empress", meaning: "Fertility, nurturing, abundance, nature connection", reverseChance: 0.5, type: 'major', keywords: ["abundance", "nurturing", "growth"] },
+  { name: "The Emperor", meaning: "Authority, structure, control, fatherhood", reverseChance: 0.5, type: 'major', keywords: ["authority", "structure", "control"] },
+  { name: "The Hierophant", meaning: "Tradition, conformity, morality, ethics", reverseChance: 0.5, type: 'major', keywords: ["tradition", "teaching", "beliefs"] },
+  { name: "The Lovers", meaning: "Love, harmony, relationships, choices", reverseChance: 0.5, type: 'major', keywords: ["love", "choice", "harmony"] },
+  { name: "The Chariot", meaning: "Control, willpower, determination, success", reverseChance: 0.5, type: 'major', keywords: ["willpower", "success", "determination"] },
+  { name: "Strength", meaning: "Courage, patience, control, compassion", reverseChance: 0.5, type: 'major', keywords: ["courage", "patience", "inner-strength"] },
+  { name: "The Hermit", meaning: "Soul-searching, introspection, inner guidance", reverseChance: 0.5, type: 'major', keywords: ["solitude", "wisdom", "guidance"] },
+  { name: "Wheel of Fortune", meaning: "Change, cycles, inevitable fate, turning point", reverseChance: 0.5, type: 'major', keywords: ["change", "cycles", "destiny"] },
+  { name: "Justice", meaning: "Justice, fairness, truth, cause and effect", reverseChance: 0.5, type: 'major', keywords: ["justice", "truth", "balance"] },
+  { name: "The Hanged Man", meaning: "Surrender, letting go, new perspective", reverseChance: 0.5, type: 'major', keywords: ["sacrifice", "perspective", "surrender"] },
+  { name: "Death", meaning: "Endings, change, transformation, transition", reverseChance: 0.5, type: 'major', keywords: ["transformation", "endings", "change"] },
+  { name: "Temperance", meaning: "Balance, moderation, patience, purpose", reverseChance: 0.5, type: 'major', keywords: ["balance", "harmony", "moderation"] },
+  { name: "The Devil", meaning: "Shadow self, attachment, addiction, restriction", reverseChance: 0.5, type: 'major', keywords: ["bondage", "materialism", "shadow-self"] },
+  { name: "The Tower", meaning: "Sudden change, upheaval, chaos, revelation", reverseChance: 0.5, type: 'major', keywords: ["disruption", "revelation", "awakening"] },
+  { name: "The Star", meaning: "Hope, faith, purpose, renewal, spirituality", reverseChance: 0.5, type: 'major', keywords: ["hope", "inspiration", "renewal"] },
+  { name: "The Moon", meaning: "Illusion, fear, anxiety, subconscious, intuition", reverseChance: 0.5, type: 'major', keywords: ["intuition", "illusion", "fear"] },
+  { name: "The Sun", meaning: "Joy, success, celebration, positivity", reverseChance: 0.5, type: 'major', keywords: ["joy", "success", "vitality"] },
+  { name: "Judgement", meaning: "Rebirth, inner calling, absolution", reverseChance: 0.5, type: 'major', keywords: ["awakening", "renewal", "purpose"] },
+  { name: "The World", meaning: "Completion, integration, accomplishment, travel", reverseChance: 0.5, type: 'major', keywords: ["completion", "fulfillment", "integration"] }
 ];
 
-// Minor Arcana
+// Update createMinorArcana to include keywords
 const createMinorArcana = (suit: string, element: string): TarotCard[] => {
   const numbers = ['Ace', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
   const courts = ['Page', 'Knight', 'Queen', 'King'];
@@ -45,7 +48,8 @@ const createMinorArcana = (suit: string, element: string): TarotCard[] => {
     reverseChance: 0.5,
     type: 'minor' as const,
     suit,
-    element
+    element,
+    keywords: [`${num.toLowerCase()}`, element.toLowerCase(), suit.toLowerCase()]
   }));
 
   const courtCards = courts.map(court => ({
@@ -54,7 +58,8 @@ const createMinorArcana = (suit: string, element: string): TarotCard[] => {
     reverseChance: 0.5,
     type: 'minor' as const,
     suit,
-    element
+    element,
+    keywords: [`${court.toLowerCase()}`, element.toLowerCase(), suit.toLowerCase()]
   }));
 
   return [...numberCards, ...courtCards];
