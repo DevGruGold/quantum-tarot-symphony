@@ -104,7 +104,7 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
             initial={{ rotateY: isRevealed ? 180 : 0 }}
             animate={{ rotateY: isRevealed ? 0 : 180 }}
             transition={{ duration: 0.6 }}
-            className="w-32 h-48 rounded-lg relative"
+            className="w-24 h-36 md:w-32 md:h-48 rounded-lg relative"
             style={{
               transformStyle: 'preserve-3d',
               perspective: '1000px'
