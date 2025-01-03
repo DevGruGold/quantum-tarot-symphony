@@ -24,7 +24,6 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
   const [canReveal, setCanReveal] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(false);
 
-  // Add resonance increase effect while pressed
   useEffect(() => {
     let intervalId: number;
     if (isPressed && !isRevealed && !canReveal) {
@@ -40,9 +39,8 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
           }
           return newValue;
         });
-      }, 100); // Increase every 100ms
+      }, 100);
     } else if (!isPressed && !isRevealed) {
-      // Slowly decrease resonance when not pressed
       intervalId = window.setInterval(() => {
         setResonance(prev => Math.max(prev - 0.03, 0));
       }, 100);
@@ -65,13 +63,6 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
   const handlePressStart = () => {
     setIsPressed(true);
     setAudioEnabled(true);
-    if (!isRevealed) {
-      toast({
-        title: `${position.charAt(0).toUpperCase() + position.slice(1)} Frequency Guide`,
-        description: `Hold and focus. Current resonance: ${(resonance * 100).toFixed(1)}%. Listen to the frequency to align with this timeline.`,
-        duration: 3000,
-      });
-    }
   };
 
   const handlePressEnd = () => {
@@ -80,32 +71,16 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
   };
 
   const getCardArtwork = (cardName: string) => {
-    // Map card names to their corresponding artwork
     const artworkMap: Record<string, string> = {
-      'The Fool': '🃏',
-      'The Magician': '🎭',
-      'The High Priestess': '👑',
-      'The Empress': '👸',
-      'The Emperor': '🤴',
-      'The Hierophant': '⛪',
-      'The Lovers': '💑',
-      'The Chariot': '🏃',
-      'Strength': '💪',
-      'The Hermit': '🧙',
-      'Wheel of Fortune': '🎡',
-      'Justice': '⚖️',
-      'The Hanged Man': '🙃',
-      'Death': '💀',
-      'Temperance': '🕊️',
-      'The Devil': '😈',
-      'The Tower': '🗼',
-      'The Star': '⭐',
-      'The Moon': '🌙',
-      'The Sun': '☀️',
-      'Judgement': '📯',
-      'The World': '🌍',
+      'The Fool': '🃏', 'The Magician': '🎭', 'The High Priestess': '👑',
+      'The Empress': '👸', 'The Emperor': '🤴', 'The Hierophant': '⛪',
+      'The Lovers': '💑', 'The Chariot': '🏃', 'Strength': '💪',
+      'The Hermit': '🧙', 'Wheel of Fortune': '🎡', 'Justice': '⚖️',
+      'The Hanged Man': '🙃', 'Death': '💀', 'Temperance': '🕊️',
+      'The Devil': '😈', 'The Tower': '🗼', 'The Star': '⭐',
+      'The Moon': '🌙', 'The Sun': '☀️', 'Judgement': '📯',
+      'The World': '🌍'
     };
-    
     return artworkMap[cardName] || '🌟';
   };
 
@@ -129,7 +104,7 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
             initial={{ rotateY: isRevealed ? 180 : 0 }}
             animate={{ rotateY: isRevealed ? 0 : 180 }}
             transition={{ duration: 0.6 }}
-            className="w-40 h-64 rounded-lg relative"
+            className="w-32 h-48 rounded-lg relative"
             style={{
               transformStyle: 'preserve-3d',
               perspective: '1000px'
@@ -147,29 +122,19 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
                 transform: isRevealed ? 'rotateY(0deg)' : 'rotateY(180deg)',
                 backfaceVisibility: 'hidden'
               }}
-              animate={isPressed ? {
-                boxShadow: [
-                  `0 0 ${20 + resonance * 20}px ${color}${Math.floor(resonance * 100)}`,
-                  `0 0 ${40 + resonance * 40}px ${color}${Math.floor(resonance * 100)}`,
-                  `0 0 ${20 + resonance * 20}px ${color}${Math.floor(resonance * 100)}`
-                ]
-              } : {}}
-              transition={{ duration: 1.5, repeat: Infinity }}
             >
               {isRevealed && card && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-white">
-                  <div className="text-8xl mb-4 quantum-float">
+                  <div className="text-4xl mb-2 quantum-float">
                     {getCardArtwork(card.name)}
                   </div>
-                  <div className="text-xl font-bold mb-2 text-center" style={{ 
+                  <div className="text-sm font-bold mb-1 text-center" style={{ 
                     transform: card.isReversed ? 'rotate(180deg)' : 'none' 
                   }}>
                     {card.name}
                   </div>
-                  <div className="text-sm text-center mt-2">
+                  <div className="text-xs text-center mt-1">
                     {position.charAt(0).toUpperCase() + position.slice(1)}
-                    <br />
-                    Frequency: {frequency.toFixed(3)}φ
                   </div>
                 </div>
               )}
@@ -186,7 +151,7 @@ const TarotCard = ({ position, color, x, y, frequency, isRevealed, card, onClick
             >
               <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
                 <motion.div 
-                  className="text-6xl quantum-pulse mb-4"
+                  className="text-3xl quantum-pulse mb-2"
                   animate={{
                     scale: [1, 1.2, 1],
                     opacity: [0.7, 1, 0.7]

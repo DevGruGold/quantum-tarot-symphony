@@ -4,14 +4,34 @@ import MeditationStep from './MeditationStep';
 import QuantumAudio from '../QuantumAudio';
 import { Progress } from '../ui/progress';
 import { Button } from '../ui/button';
-import { toast } from '../ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 
 const MEDITATION_STEPS = [
-  { emoji: '🧘', instruction: 'Find a comfortable position and take a deep breath...' },
-  { emoji: '👁️', instruction: 'Close your eyes and focus on your breathing...' },
-  { emoji: '✨', instruction: 'Feel the energy flowing through your body...' },
-  { emoji: '🌟', instruction: 'Connect with the quantum field around you...' },
-  { emoji: '🎴', instruction: 'Open your mind to receive the cards\' messages...' }
+  { 
+    emoji: '🧘', 
+    instruction: 'Find a comfortable position and take a deep breath...',
+    frequency: 432 // Earth frequency
+  },
+  { 
+    emoji: '👁️', 
+    instruction: 'Close your eyes and focus on your breathing...',
+    frequency: 528 // Transformation frequency
+  },
+  { 
+    emoji: '✨', 
+    instruction: 'Feel the energy flowing through your body...',
+    frequency: 639 // Heart frequency
+  },
+  { 
+    emoji: '🌟', 
+    instruction: 'Connect with the quantum field around you...',
+    frequency: 741 // Third eye frequency
+  },
+  { 
+    emoji: '🎴', 
+    instruction: 'Open your mind to receive the cards\' messages...',
+    frequency: 852 // Crown frequency
+  }
 ];
 
 interface MeditationGuideProps {
@@ -92,7 +112,7 @@ const MeditationGuide = ({ onComplete }: MeditationGuideProps) => {
         </div>
 
         <QuantumAudio 
-          frequency={432 + (currentStep * 8)} // Base frequency of 432Hz with slight variations
+          frequency={MEDITATION_STEPS[currentStep].frequency}
           isPlaying={!isSkipped}
         />
 

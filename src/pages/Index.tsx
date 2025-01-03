@@ -5,7 +5,7 @@ import TarotCard from '@/components/TarotCard';
 import QuantumWave from '@/components/QuantumWave';
 import MeditationGuide from '@/components/meditation/MeditationGuide';
 import { drawMinorArcana, drawMajorArcana, getCombinedReading } from '@/utils/tarotData';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const PHI = 1.618033988749895;
@@ -17,36 +17,52 @@ interface BirthDates {
 
 const POSITIONS = [
   { 
-    id: 'foundation', 
+    id: 'past', 
     frequency: 1/PHI, 
-    x: 100, 
+    x: 150, 
     y: 200, 
     color: '#EC4899',
-    description: 'Foundation and current influences'
+    description: 'Past influences and history'
   },
   { 
-    id: 'path', 
+    id: 'present', 
     frequency: 1, 
     x: 300, 
     y: 150, 
     color: '#8B5CF6',
-    description: 'Path ahead and opportunities'
+    description: 'Present situation'
   },
   { 
-    id: 'challenge', 
+    id: 'future', 
     frequency: PHI, 
-    x: 500, 
-    y: 150, 
+    x: 450, 
+    y: 200, 
     color: '#14B8A6',
-    description: 'Challenges and obstacles'
+    description: 'Future potential'
   },
   { 
-    id: 'outcome', 
-    frequency: PHI * PHI, 
-    x: 700, 
-    y: 200, 
+    id: 'above', 
+    frequency: PHI * 1.5, 
+    x: 300, 
+    y: 50, 
     color: '#F59E0B',
-    description: 'Final outcome (Major Arcana)'
+    description: 'Higher self guidance'
+  },
+  { 
+    id: 'below', 
+    frequency: 1/PHI * 0.5, 
+    x: 300, 
+    y: 250, 
+    color: '#6366F1',
+    description: 'Subconscious influences'
+  },
+  { 
+    id: 'advice', 
+    frequency: PHI * 2, 
+    x: 600, 
+    y: 150, 
+    color: '#EF4444',
+    description: 'Final guidance (Major Arcana)'
   }
 ];
 
@@ -63,10 +79,12 @@ const Index = () => {
   const getMobilePosition = (pos: typeof POSITIONS[0]) => {
     if (!isMobile) return pos;
     const mobilePositions = {
-      foundation: { x: 20, y: 150 },
-      path: { x: 120, y: 100 },
-      challenge: { x: 220, y: 100 },
-      outcome: { x: 320, y: 150 }
+      past: { x: 50, y: 200 },
+      present: { x: 150, y: 150 },
+      future: { x: 250, y: 200 },
+      above: { x: 150, y: 50 },
+      below: { x: 150, y: 250 },
+      advice: { x: 350, y: 150 }
     };
     return { ...pos, ...mobilePositions[pos.id as keyof typeof mobilePositions] };
   };
@@ -88,7 +106,7 @@ const Index = () => {
     setShowMeditation(true);
     const initialCards: Record<string, any> = {};
     POSITIONS.forEach(pos => {
-      initialCards[pos.id] = pos.id === 'outcome' ? drawMajorArcana() : drawMinorArcana();
+      initialCards[pos.id] = pos.id === 'advice' ? drawMajorArcana() : drawMinorArcana();
     });
     setDrawnCards(initialCards);
   };
@@ -96,11 +114,9 @@ const Index = () => {
   const handleMeditationComplete = () => {
     setShowMeditation(false);
     setIsRunning(true);
-    const peopleCount = Object.values(birthDates || {}).filter(Boolean).length;
     toast({
       title: "Quantum Entanglement Initiated",
-      description: `Reading initialized for ${peopleCount === 0 ? 'general guidance' : 
-        peopleCount === 1 ? 'personal guidance' : 'relationship guidance'}. Click each card to reveal your reading.`,
+      description: "Your cards have been drawn. Click each card to reveal its message and meaning.",
     });
   };
 
@@ -169,10 +185,10 @@ const Index = () => {
                 return (
                   <motion.line
                     key={`${pos.id}-${nextPos.id}`}
-                    x1={start.x + 30}
-                    y1={start.y + 40}
-                    x2={end.x + 30}
-                    y2={end.y + 40}
+                    x1={start.x + 20}
+                    y1={start.y + 30}
+                    x2={end.x + 20}
+                    y2={end.y + 30}
                     stroke="#4B5563"
                     strokeWidth="1"
                     strokeDasharray="5,5"
@@ -192,7 +208,7 @@ const Index = () => {
                 <QuantumWave
                   key={`wave-${pos.id}`}
                   startX={adjustedPos.x - 20}
-                  startY={adjustedPos.y + 40}
+                  startY={adjustedPos.y + 30}
                   frequency={pos.frequency}
                   color={pos.color}
                   time={time}
@@ -231,7 +247,7 @@ const Index = () => {
         >
           <div className="text-sm text-gray-300">
             <div className="font-bold mb-2">Reading Guide:</div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {POSITIONS.map(pos => (
                 <div key={pos.id} style={{ color: pos.color }}>
                   {pos.id.charAt(0).toUpperCase() + pos.id.slice(1)}: {pos.description}
