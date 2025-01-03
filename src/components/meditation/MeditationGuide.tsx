@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import MeditationStep from './MeditationStep';
 import QuantumAudio from '../QuantumAudio';
+import SacredGeometry from './SacredGeometry';
 import { Progress } from '../ui/progress';
 import { Button } from '../ui/button';
 import { toast } from '@/hooks/use-toast';
@@ -10,27 +11,37 @@ const MEDITATION_STEPS = [
   { 
     emoji: '🧘', 
     instruction: 'Find a comfortable position and take a deep breath...',
-    frequency: 432 // Earth frequency
+    frequency: 432, // Earth frequency
+    geometry: 'circle',
+    color: '#4CAF50'
   },
   { 
     emoji: '👁️', 
     instruction: 'Close your eyes and focus on your breathing...',
-    frequency: 528 // Transformation frequency
+    frequency: 528, // DNA/Transformation frequency
+    geometry: 'flower',
+    color: '#9C27B0'
   },
   { 
     emoji: '✨', 
     instruction: 'Feel the energy flowing through your body...',
-    frequency: 639 // Heart frequency
+    frequency: 639, // Heart/Connection frequency
+    geometry: 'star',
+    color: '#E91E63'
   },
   { 
     emoji: '🌟', 
     instruction: 'Connect with the quantum field around you...',
-    frequency: 741 // Third eye frequency
+    frequency: 741, // Third eye/Intuition frequency
+    geometry: 'merkaba',
+    color: '#3F51B5'
   },
   { 
     emoji: '🎴', 
     instruction: 'Open your mind to receive the cards\' messages...',
-    frequency: 852 // Crown frequency
+    frequency: 852, // Crown/Spiritual frequency
+    geometry: 'spiral',
+    color: '#9C27B0'
   }
 ];
 
@@ -93,7 +104,13 @@ const MeditationGuide = ({ onComplete }: MeditationGuideProps) => {
           <Progress value={progress} className="mb-8" />
         </div>
 
-        <div className="relative h-48">
+        <div className="relative h-64">
+          <SacredGeometry
+            type={MEDITATION_STEPS[currentStep].geometry as any}
+            color={MEDITATION_STEPS[currentStep].color}
+            isActive={!isSkipped}
+          />
+          
           {MEDITATION_STEPS.map((step, index) => (
             <motion.div
               key={index}
