@@ -11,46 +11,44 @@ const QuantumAudio = ({ frequency, isPlaying }: QuantumAudioProps) => {
   const gainNodeRef = useRef<GainNode | null>(null);
 
   useEffect(() => {
-    // Initialize audio context
-    if (!audioContextRef.current) {
-      audioContextRef.current = new AudioContext();
-      gainNodeRef.current = audioContextRef.current.createGain();
-      gainNodeRef.current.connect(audioContextRef.current.destination);
-      gainNodeRef.current.gain.value = 0.15; // Set volume to 15%
-    }
+    const initAudio = () => {
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        gainNodeRef.current = audioContextRef.current.createGain();
+        gainNodeRef.current.connect(audioContextRef.current.destination);
+        gainNodeRef.current.gain.value = 0.1; // Lower volume for comfort
+      }
+    };
 
-    if (isPlaying && audioContextRef.current && gainNodeRef.current) {
-      // Create and configure oscillator
-      oscillatorRef.current = audioContextRef.current.createOscillator();
-      oscillatorRef.current.type = 'sine';
-      // Map frequency to audible range (220-880Hz)
-      oscillatorRef.current.frequency.value = 220 + (frequency * 220);
-      oscillatorRef.current.connect(gainNodeRef.current);
+    if (isPlaying) {
+      initAudio();
       
-      // Smooth start
-      gainNodeRef.current.gain.setValueAtTime(0, audioContextRef.current.currentTime);
-      gainNodeRef.current.gain.linearRampToValueAtTime(0.15, audioContextRef.current.currentTime + 0.1);
-      
-      oscillatorRef.current.start();
-    } else {
-      // Smooth stop and cleanup
-      if (oscillatorRef.current && gainNodeRef.current && audioContextRef.current) {
-        gainNodeRef.current.gain.linearRampToValueAtTime(0, audioContextRef.current.currentTime + 0.1);
-        setTimeout(() => {
-          if (oscillatorRef.current) {
-            oscillatorRef.current.stop();
-            oscillatorRef.current.disconnect();
-            oscillatorRef.current = null;
-          }
-        }, 100);
+      if (audioContextRef.current && gainNodeRef.current) {
+        oscillatorRef.current = audioContextRef.current.createOscillator();
+        oscillatorRef.current.type = 'sine';
+        oscillatorRef.current.frequency.setValueAtTime(frequency, audioContextRef.current.currentTime);
+        oscillatorRef.current.connect(gainNodeRef.current);
+        
+        // Smooth start
+        gainNodeRef.current.gain.setValueAtTime(0, audioContextRef.current.currentTime);
+        gainNodeRef.current.gain.linearRampToValueAtTime(0.1, audioContextRef.current.currentTime + 0.5);
+        
+        oscillatorRef.current.start();
+        
+        console.log(`Playing frequency: ${frequency}Hz`);
       }
     }
 
     return () => {
-      if (oscillatorRef.current) {
-        oscillatorRef.current.stop();
-        oscillatorRef.current.disconnect();
-        oscillatorRef.current = null;
+      if (oscillatorRef.current && gainNodeRef.current && audioContextRef.current) {
+        // Smooth stop
+        gainNodeRef.current.gain.linearRampToValueAtTime(0, audioContextRef.current.currentTime + 0.5);
+        
+        setTimeout(() => {
+          oscillatorRef.current?.stop();
+          oscillatorRef.current?.disconnect();
+          oscillatorRef.current = null;
+        }, 500);
       }
     };
   }, [isPlaying, frequency]);

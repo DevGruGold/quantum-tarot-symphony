@@ -9,37 +9,32 @@ import { toast } from '@/hooks/use-toast';
 
 const MEDITATION_STEPS = [
   { 
-    emoji: '🧘', 
-    instruction: 'Find a comfortable position and take a deep breath...',
-    frequency: 432, // Earth frequency
+    instruction: 'Ground yourself and connect with Earth\'s frequency...',
+    frequency: 432,
     geometry: 'circle',
     color: '#4CAF50'
   },
   { 
-    emoji: '👁️', 
-    instruction: 'Close your eyes and focus on your breathing...',
-    frequency: 528, // DNA/Transformation frequency
+    instruction: 'Allow transformation to flow through you...',
+    frequency: 528,
     geometry: 'flower',
     color: '#9C27B0'
   },
   { 
-    emoji: '✨', 
-    instruction: 'Feel the energy flowing through your body...',
-    frequency: 639, // Heart/Connection frequency
+    instruction: 'Open your heart to universal connection...',
+    frequency: 639,
     geometry: 'star',
     color: '#E91E63'
   },
   { 
-    emoji: '🌟', 
-    instruction: 'Connect with the quantum field around you...',
-    frequency: 741, // Third eye/Intuition frequency
+    instruction: 'Activate your inner vision and intuition...',
+    frequency: 741,
     geometry: 'merkaba',
     color: '#3F51B5'
   },
   { 
-    emoji: '🎴', 
-    instruction: 'Open your mind to receive the cards\' messages...',
-    frequency: 852, // Crown/Spiritual frequency
+    instruction: 'Connect with higher consciousness...',
+    frequency: 852,
     geometry: 'spiral',
     color: '#9C27B0'
   }
@@ -53,11 +48,12 @@ const MeditationGuide = ({ onComplete }: MeditationGuideProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
   const [isSkipped, setIsSkipped] = useState(false);
+  const [isAudioInitialized, setIsAudioInitialized] = useState(false);
 
   useEffect(() => {
     if (isSkipped) return;
 
-    const stepDuration = 10000; // 10 seconds per step
+    const stepDuration = 12000; // 12 seconds per step
     const interval = 100; // Update progress every 100ms
     const incrementAmount = (100 / MEDITATION_STEPS.length) / (stepDuration / interval);
 
@@ -67,7 +63,6 @@ const MeditationGuide = ({ onComplete }: MeditationGuideProps) => {
         if (newProgress >= ((currentStep + 1) * 100) / MEDITATION_STEPS.length) {
           if (currentStep < MEDITATION_STEPS.length - 1) {
             setCurrentStep(prev => prev + 1);
-            // Trigger haptic feedback if available
             if (navigator.vibrate) {
               navigator.vibrate(200);
             }
@@ -92,6 +87,10 @@ const MeditationGuide = ({ onComplete }: MeditationGuideProps) => {
     onComplete();
   };
 
+  const initializeAudio = () => {
+    setIsAudioInitialized(true);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -99,16 +98,25 @@ const MeditationGuide = ({ onComplete }: MeditationGuideProps) => {
       className="fixed inset-0 bg-background/95 backdrop-blur-sm flex flex-col items-center justify-center p-4 z-50"
     >
       <div className="max-w-md w-full space-y-8">
+        {!isAudioInitialized && (
+          <Button 
+            onClick={initializeAudio}
+            className="w-full mb-4"
+          >
+            Begin Sound Journey
+          </Button>
+        )}
+
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Prepare Your Mind</h2>
+          <h2 className="text-2xl font-bold mb-4">Sacred Geometry Meditation</h2>
           <Progress value={progress} className="mb-8" />
         </div>
 
-        <div className="relative h-64">
+        <div className="relative h-80">
           <SacredGeometry
             type={MEDITATION_STEPS[currentStep].geometry as any}
             color={MEDITATION_STEPS[currentStep].color}
-            isActive={!isSkipped}
+            isActive={!isSkipped && isAudioInitialized}
           />
           
           {MEDITATION_STEPS.map((step, index) => (
@@ -120,9 +128,9 @@ const MeditationGuide = ({ onComplete }: MeditationGuideProps) => {
               className="absolute inset-0"
             >
               <MeditationStep
-                emoji={step.emoji}
                 instruction={step.instruction}
                 isActive={currentStep === index}
+                color={step.color}
               />
             </motion.div>
           ))}
@@ -130,7 +138,7 @@ const MeditationGuide = ({ onComplete }: MeditationGuideProps) => {
 
         <QuantumAudio 
           frequency={MEDITATION_STEPS[currentStep].frequency}
-          isPlaying={!isSkipped}
+          isPlaying={!isSkipped && isAudioInitialized}
         />
 
         <Button 
