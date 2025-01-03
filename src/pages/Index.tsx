@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BirthDateInput from '@/components/BirthDateInput';
 import TarotCard from '@/components/TarotCard';
 import QuantumWave from '@/components/QuantumWave';
+import MeditationGuide from '@/components/meditation/MeditationGuide';
 import { drawMinorArcana, drawMajorArcana, getCombinedReading } from '@/utils/tarotData';
 import { toast } from '@/components/ui/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Card, CardContent } from '@/components/ui/card';
 
 const PHI = 1.618033988749895;
 
@@ -56,6 +56,7 @@ const Index = () => {
   const [time, setTime] = useState(0);
   const [revealedCards, setRevealedCards] = useState<string[]>([]);
   const [drawnCards, setDrawnCards] = useState<Record<string, any>>({});
+  const [showMeditation, setShowMeditation] = useState(false);
   const isMobile = useIsMobile();
 
   // Adjust positions for mobile
@@ -84,14 +85,18 @@ const Index = () => {
 
   const handleStart = (dates: BirthDates) => {
     setBirthDates(dates);
-    setIsRunning(true);
+    setShowMeditation(true);
     const initialCards: Record<string, any> = {};
     POSITIONS.forEach(pos => {
       initialCards[pos.id] = pos.id === 'outcome' ? drawMajorArcana() : drawMinorArcana();
     });
     setDrawnCards(initialCards);
-    
-    const peopleCount = Object.values(dates).filter(Boolean).length;
+  };
+
+  const handleMeditationComplete = () => {
+    setShowMeditation(false);
+    setIsRunning(true);
+    const peopleCount = Object.values(birthDates || {}).filter(Boolean).length;
     toast({
       title: "Quantum Entanglement Initiated",
       description: `Reading initialized for ${peopleCount === 0 ? 'general guidance' : 
@@ -127,6 +132,12 @@ const Index = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background p-4">
+      <AnimatePresence>
+        {showMeditation && (
+          <MeditationGuide onComplete={handleMeditationComplete} />
+        )}
+      </AnimatePresence>
+
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
