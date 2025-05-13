@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BirthDateInput from '@/components/BirthDateInput';
@@ -28,7 +27,7 @@ const POSITIONS = [
     x: 150, 
     y: 200, 
     color: '#EC4899',
-    description: 'Past influences and history'
+    description: 'Past influences and history that have shaped your current reality'
   },
   { 
     id: 'present', 
@@ -36,7 +35,7 @@ const POSITIONS = [
     x: 300, 
     y: 150, 
     color: '#8B5CF6',
-    description: 'Present situation'
+    description: 'The current situation and energies surrounding you now'
   },
   { 
     id: 'future', 
@@ -44,7 +43,7 @@ const POSITIONS = [
     x: 450, 
     y: 200, 
     color: '#14B8A6',
-    description: 'Future potential'
+    description: 'Potential outcomes and future possibilities if current path continues'
   },
   { 
     id: 'above', 
@@ -52,7 +51,7 @@ const POSITIONS = [
     x: 300, 
     y: 50, 
     color: '#F59E0B',
-    description: 'Higher self guidance'
+    description: 'Higher self guidance and spiritual influences affecting you'
   },
   { 
     id: 'below', 
@@ -60,7 +59,7 @@ const POSITIONS = [
     x: 300, 
     y: 250, 
     color: '#6366F1',
-    description: 'Subconscious influences'
+    description: 'Subconscious influences and hidden factors at work beneath the surface'
   },
   { 
     id: 'advice', 
@@ -68,7 +67,7 @@ const POSITIONS = [
     x: 600, 
     y: 150, 
     color: '#EF4444',
-    description: 'Final guidance (Major Arcana)'
+    description: 'Final guidance from a Major Arcana card to navigate your situation'
   }
 ];
 
@@ -81,6 +80,7 @@ const Index = () => {
   const [showMeditation, setShowMeditation] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [quantumCircuitId, setQuantumCircuitId] = useState<string | null>(null);
+  const [quantumEntanglement, setQuantumEntanglement] = useState<Record<string, number>>({});
 
   useEffect(() => {
     // Verify IBM-Q API key on component mount
@@ -112,6 +112,41 @@ const Index = () => {
     }
     return () => cancelAnimationFrame(frameId);
   }, [isRunning]);
+
+  // Calculate quantum entanglement effects between cards
+  useEffect(() => {
+    if (revealedCards.length >= 2) {
+      const entanglementScores: Record<string, number> = {};
+      
+      // Calculate entanglement between each pair of revealed cards
+      for (let i = 0; i < revealedCards.length; i++) {
+        for (let j = i + 1; j < revealedCards.length; j++) {
+          const posA = revealedCards[i];
+          const posB = revealedCards[j];
+          const cardA = drawnCards[posA];
+          const cardB = drawnCards[posB];
+          
+          // Simplified quantum entanglement calculation
+          const entanglementScore = Math.abs(
+            Math.sin((cardA.isReversed ? -1 : 1) * POSITIONS.find(p => p.id === posA)!.frequency * 
+            (cardB.isReversed ? -1 : 1) * POSITIONS.find(p => p.id === posB)!.frequency)
+          );
+          
+          entanglementScores[`${posA}-${posB}`] = entanglementScore;
+          
+          // If high entanglement, show a toast notification
+          if (entanglementScore > 0.8 && !quantumEntanglement[`${posA}-${posB}`]) {
+            toast({
+              title: "⚛️ Quantum Entanglement Detected!",
+              description: `Strong connection between ${posA} and ${posB} cards.`,
+            });
+          }
+        }
+      }
+      
+      setQuantumEntanglement(entanglementScores);
+    }
+  }, [revealedCards]);
 
   const handleStart = async (dates: BirthDates) => {
     setBirthDates(dates);
@@ -162,7 +197,7 @@ const Index = () => {
         
         toast({
           title: "Quantum Entanglement Completed",
-          description: "Your cards have been quantumly entangled. Click each card to reveal its message.",
+          description: "Your cards have been quantumly entangled. Tap each card to reveal its message.",
         });
       }
     } else {
@@ -224,6 +259,7 @@ const Index = () => {
         <ReadingSummary 
           cards={drawnCards}
           isVisible={showSummary}
+          quantumEntanglement={quantumEntanglement}
         />
       </motion.div>
     </div>
