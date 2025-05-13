@@ -1,121 +1,944 @@
 export interface TarotCard {
   name: string;
-  meaning: string;
-  reverseChance: number;
-  isReversed?: boolean;
-  type: 'major' | 'minor';
-  suit?: string;
-  element?: string;
+  number: number;
+  arcana: 'major' | 'minor';
+  suit?: 'wands' | 'cups' | 'swords' | 'pentacles';
+  element?: 'fire' | 'water' | 'air' | 'earth';
   keywords: string[];
+  meanings: {
+    light: string[];
+    shadow: string[];
+  };
+  interpretation: string;
+  isReversed?: boolean;
 }
 
-// Major Arcana
-
-// Update majorArcana array to include keywords
-const majorArcana: TarotCard[] = [
-  { name: "The Fool", meaning: "New beginnings, spontaneity, faith, apparent folly", reverseChance: 0.5, type: 'major', keywords: ["beginnings", "spontaneity", "faith"] },
-  { name: "The Magician", meaning: "Manifestation, resourcefulness, power, skill", reverseChance: 0.5, type: 'major', keywords: ["manifestation", "power", "skill"] },
-  { name: "The High Priestess", meaning: "Intuition, mystery, spiritual insight, divine knowledge", reverseChance: 0.5, type: 'major', keywords: ["intuition", "mystery", "insight"] },
-  { name: "The Empress", meaning: "Fertility, nurturing, abundance, nature connection", reverseChance: 0.5, type: 'major', keywords: ["abundance", "nurturing", "growth"] },
-  { name: "The Emperor", meaning: "Authority, structure, control, fatherhood", reverseChance: 0.5, type: 'major', keywords: ["authority", "structure", "control"] },
-  { name: "The Hierophant", meaning: "Tradition, conformity, morality, ethics", reverseChance: 0.5, type: 'major', keywords: ["tradition", "teaching", "beliefs"] },
-  { name: "The Lovers", meaning: "Love, harmony, relationships, choices", reverseChance: 0.5, type: 'major', keywords: ["love", "choice", "harmony"] },
-  { name: "The Chariot", meaning: "Control, willpower, determination, success", reverseChance: 0.5, type: 'major', keywords: ["willpower", "success", "determination"] },
-  { name: "Strength", meaning: "Courage, patience, control, compassion", reverseChance: 0.5, type: 'major', keywords: ["courage", "patience", "inner-strength"] },
-  { name: "The Hermit", meaning: "Soul-searching, introspection, inner guidance", reverseChance: 0.5, type: 'major', keywords: ["solitude", "wisdom", "guidance"] },
-  { name: "Wheel of Fortune", meaning: "Change, cycles, inevitable fate, turning point", reverseChance: 0.5, type: 'major', keywords: ["change", "cycles", "destiny"] },
-  { name: "Justice", meaning: "Justice, fairness, truth, cause and effect", reverseChance: 0.5, type: 'major', keywords: ["justice", "truth", "balance"] },
-  { name: "The Hanged Man", meaning: "Surrender, letting go, new perspective", reverseChance: 0.5, type: 'major', keywords: ["sacrifice", "perspective", "surrender"] },
-  { name: "Death", meaning: "Endings, change, transformation, transition", reverseChance: 0.5, type: 'major', keywords: ["transformation", "endings", "change"] },
-  { name: "Temperance", meaning: "Balance, moderation, patience, purpose", reverseChance: 0.5, type: 'major', keywords: ["balance", "harmony", "moderation"] },
-  { name: "The Devil", meaning: "Shadow self, attachment, addiction, restriction", reverseChance: 0.5, type: 'major', keywords: ["bondage", "materialism", "shadow-self"] },
-  { name: "The Tower", meaning: "Sudden change, upheaval, chaos, revelation", reverseChance: 0.5, type: 'major', keywords: ["disruption", "revelation", "awakening"] },
-  { name: "The Star", meaning: "Hope, faith, purpose, renewal, spirituality", reverseChance: 0.5, type: 'major', keywords: ["hope", "inspiration", "renewal"] },
-  { name: "The Moon", meaning: "Illusion, fear, anxiety, subconscious, intuition", reverseChance: 0.5, type: 'major', keywords: ["intuition", "illusion", "fear"] },
-  { name: "The Sun", meaning: "Joy, success, celebration, positivity", reverseChance: 0.5, type: 'major', keywords: ["joy", "success", "vitality"] },
-  { name: "Judgement", meaning: "Rebirth, inner calling, absolution", reverseChance: 0.5, type: 'major', keywords: ["awakening", "renewal", "purpose"] },
-  { name: "The World", meaning: "Completion, integration, accomplishment, travel", reverseChance: 0.5, type: 'major', keywords: ["completion", "fulfillment", "integration"] }
-];
-
-// Update createMinorArcana to include keywords
-const createMinorArcana = (suit: string, element: string): TarotCard[] => {
-  const numbers = ['Ace', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
-  const courts = ['Page', 'Knight', 'Queen', 'King'];
-  
-  const numberCards = numbers.map(num => ({
-    name: `${num} of ${suit}`,
-    meaning: `${num} energy of ${element}`,
-    reverseChance: 0.5,
-    type: 'minor' as const,
-    suit,
-    element,
-    keywords: [`${num.toLowerCase()}`, element.toLowerCase(), suit.toLowerCase()]
-  }));
-
-  const courtCards = courts.map(court => ({
-    name: `${court} of ${suit}`,
-    meaning: `${court} energy of ${element}`,
-    reverseChance: 0.5,
-    type: 'minor' as const,
-    suit,
-    element,
-    keywords: [`${court.toLowerCase()}`, element.toLowerCase(), suit.toLowerCase()]
-  }));
-
-  return [...numberCards, ...courtCards];
-};
-
-const minorArcana: TarotCard[] = [
-  ...createMinorArcana('Wands', 'Fire'),
-  ...createMinorArcana('Cups', 'Water'),
-  ...createMinorArcana('Swords', 'Air'),
-  ...createMinorArcana('Pentacles', 'Earth')
-];
-
-export const drawMinorArcana = (): TarotCard => {
-  const card = { ...minorArcana[Math.floor(Math.random() * minorArcana.length)] };
-  card.isReversed = Math.random() < card.reverseChance;
-  return card;
-};
-
-export const drawMajorArcana = (): TarotCard => {
-  const card = { ...majorArcana[Math.floor(Math.random() * majorArcana.length)] };
-  card.isReversed = Math.random() < card.reverseChance;
-  return card;
-};
-
-export const calculateQuantumResonance = (frequency: number, card: TarotCard): number => {
-  const baseResonance = Math.sin(frequency * Math.PI) * 0.5 + 0.5;
-  const cardInfluence = card.isReversed ? -0.3 : 0.3;
-  return Math.max(0, Math.min(1, baseResonance + cardInfluence));
-};
-
-export const getCombinedReading = (cards: Record<string, TarotCard>): string => {
-  let reading = "🌟 Your Quantum Tarot Reading 🌟\n\n";
-  
-  const positions = [
-    { id: 'past', name: 'Past Influences' },
-    { id: 'present', name: 'Present Situation' },
-    { id: 'future', name: 'Future Potential' },
-    { id: 'above', name: 'Higher Self' },
-    { id: 'below', name: 'Subconscious' },
-    { id: 'advice', name: 'Guidance' }
-  ];
-
-  positions.forEach(({ id, name }) => {
-    const card = cards[id];
-    if (card) {
-      reading += `${name}: ${card.name} ${card.isReversed ? '(Reversed)' : ''}\n`;
-      reading += `${card.meaning}\n\n`;
-    }
-  });
-
-  reading += "\n✨ Holistic Summary ✨\n";
-  reading += "The cards are suggesting a journey through time and consciousness. ";
-  reading += "Consider how the past influences shown in your reading have shaped your present moment, ";
-  reading += "and how your current choices may ripple into the future possibilities revealed. ";
-  reading += "Your higher self and subconscious are in dialogue through these cards, ";
-  reading += "offering guidance for your path forward.";
-
-  return reading;
-};
+export const tarotData: TarotCard[] = [
+  {
+    name: 'The Fool',
+    number: 0,
+    arcana: 'major',
+    keywords: ['innocence', 'new beginnings', 'adventure'],
+    meanings: {
+      light: ['freedom', 'optimism', 'trust'],
+      shadow: ['naivety', 'recklessness', 'risk'],
+    },
+    interpretation: 'A new journey begins with optimism and trust.',
+  },
+  {
+    name: 'The Magician',
+    number: 1,
+    arcana: 'major',
+    keywords: ['skill', 'resourcefulness', 'manifestation'],
+    meanings: {
+      light: ['power', 'focus', 'action'],
+      shadow: ['manipulation', 'illusion', 'trickery'],
+    },
+    interpretation: 'Use your skills to manifest your desires.',
+  },
+  {
+    name: 'The High Priestess',
+    number: 2,
+    arcana: 'major',
+    keywords: ['intuition', 'mystery', 'wisdom'],
+    meanings: {
+      light: ['insight', 'patience', 'understanding'],
+      shadow: ['secrets', 'ignorance', 'denial'],
+    },
+    interpretation: 'Trust your intuition and seek deeper understanding.',
+  },
+  {
+    name: 'The Empress',
+    number: 3,
+    arcana: 'major',
+    keywords: ['nurturing', 'abundance', 'fertility'],
+    meanings: {
+      light: ['love', 'growth', 'compassion'],
+      shadow: ['smothering', 'stagnation', 'emptiness'],
+    },
+    interpretation: 'Embrace nurturing and create abundance in your life.',
+  },
+  {
+    name: 'The Emperor',
+    number: 4,
+    arcana: 'major',
+    keywords: ['authority', 'structure', 'control'],
+    meanings: {
+      light: ['leadership', 'stability', 'discipline'],
+      shadow: ['tyranny', 'rigidity', 'domination'],
+    },
+    interpretation: 'Establish structure and take responsible control.',
+  },
+  {
+    name: 'The Hierophant',
+    number: 5,
+    arcana: 'major',
+    keywords: ['tradition', 'guidance', 'conformity'],
+    meanings: {
+      light: ['wisdom', 'teaching', 'mentorship'],
+      shadow: ['dogma', 'oppression', 'outdated'],
+    },
+    interpretation: 'Seek guidance from tradition and established wisdom.',
+  },
+  {
+    name: 'The Lovers',
+    number: 6,
+    arcana: 'major',
+    keywords: ['love', 'harmony', 'choices'],
+    meanings: {
+      light: ['union', 'passion', 'alignment'],
+      shadow: ['conflict', 'disharmony', 'temptation'],
+    },
+    interpretation: 'Make choices that align with your heart and values.',
+  },
+  {
+    name: 'The Chariot',
+    number: 7,
+    arcana: 'major',
+    keywords: ['willpower', 'control', 'success'],
+    meanings: {
+      light: ['drive', 'ambition', 'victory'],
+      shadow: ['aggression', 'lack of control', 'defeat'],
+    },
+    interpretation: 'Harness your willpower to achieve success.',
+  },
+  {
+    name: 'Strength',
+    number: 8,
+    arcana: 'major',
+    keywords: ['courage', 'compassion', 'influence'],
+    meanings: {
+      light: ['inner strength', 'patience', 'persuasion'],
+      shadow: ['weakness', 'anger', 'intimidation'],
+    },
+    interpretation: 'Use inner strength and compassion to influence others.',
+  },
+  {
+    name: 'The Hermit',
+    number: 9,
+    arcana: 'major',
+    keywords: ['introspection', 'solitude', 'guidance'],
+    meanings: {
+      light: ['wisdom', 'reflection', 'self-discovery'],
+      shadow: ['isolation', 'loneliness', 'withdrawal'],
+    },
+    interpretation: 'Seek solitude for introspection and self-discovery.',
+  },
+  {
+    name: 'Wheel of Fortune',
+    number: 10,
+    arcana: 'major',
+    keywords: ['destiny', 'cycles', 'change'],
+    meanings: {
+      light: ['good luck', 'opportunity', 'fate'],
+      shadow: ['bad luck', 'resistance', 'inevitability'],
+    },
+    interpretation: 'Embrace the cycles of destiny and welcome change.',
+  },
+  {
+    name: 'Justice',
+    number: 11,
+    arcana: 'major',
+    keywords: ['fairness', 'truth', 'accountability'],
+    meanings: {
+      light: ['integrity', 'balance', 'responsibility'],
+      shadow: ['injustice', 'dishonesty', 'avoidance'],
+    },
+    interpretation: 'Seek fairness, truth, and accountability in all matters.',
+  },
+  {
+    name: 'The Hanged Man',
+    number: 12,
+    arcana: 'major',
+    keywords: ['sacrifice', 'perspective', 'release'],
+    meanings: {
+      light: ['surrender', 'insight', 'new vision'],
+      shadow: ['stagnation', 'resistance', 'victimhood'],
+    },
+    interpretation: 'Sacrifice and release to gain new perspective.',
+  },
+  {
+    name: 'Death',
+    number: 13,
+    arcana: 'major',
+    keywords: ['endings', 'transformation', 'renewal'],
+    meanings: {
+      light: ['letting go', 'change', 'rebirth'],
+      shadow: ['fear', 'resistance', 'decay'],
+    },
+    interpretation: 'Embrace endings as opportunities for transformation.',
+  },
+  {
+    name: 'Temperance',
+    number: 14,
+    arcana: 'major',
+    keywords: ['balance', 'moderation', 'harmony'],
+    meanings: {
+      light: ['patience', 'peace', 'integration'],
+      shadow: ['excess', 'imbalance', 'conflict'],
+    },
+    interpretation: 'Seek balance and moderation in all aspects of life.',
+  },
+  {
+    name: 'The Devil',
+    number: 15,
+    arcana: 'major',
+    keywords: ['addiction', 'materialism', 'restriction'],
+    meanings: {
+      light: ['freedom', 'release', 'empowerment'],
+      shadow: ['obsession', 'bondage', 'ignorance'],
+    },
+    interpretation: 'Recognize and break free from limiting restrictions.',
+  },
+  {
+    name: 'The Tower',
+    number: 16,
+    arcana: 'major',
+    keywords: ['sudden change', 'upheaval', 'revelation'],
+    meanings: {
+      light: ['liberation', 'awakening', 'release'],
+      shadow: ['destruction', 'chaos', 'collapse'],
+    },
+    interpretation: 'Prepare for sudden change and unexpected revelations.',
+  },
+  {
+    name: 'The Star',
+    number: 17,
+    arcana: 'major',
+    keywords: ['hope', 'inspiration', 'renewal'],
+    meanings: {
+      light: ['faith', 'serenity', 'guidance'],
+      shadow: ['despair', 'doubt', 'insecurity'],
+    },
+    interpretation: 'Find hope and inspiration in times of darkness.',
+  },
+  {
+    name: 'The Moon',
+    number: 18,
+    arcana: 'major',
+    keywords: ['illusion', 'intuition', 'uncertainty'],
+    meanings: {
+      light: ['dreams', 'imagination', 'mystery'],
+      shadow: ['fear', 'deception', 'anxiety'],
+    },
+    interpretation: 'Trust your intuition amidst illusion and uncertainty.',
+  },
+  {
+    name: 'The Sun',
+    number: 19,
+    arcana: 'major',
+    keywords: ['joy', 'success', 'vitality'],
+    meanings: {
+      light: ['happiness', 'abundance', 'clarity'],
+      shadow: ['negativity', 'oppression', 'ego'],
+    },
+    interpretation: 'Embrace joy, success, and vitality in your life.',
+  },
+  {
+    name: 'Judgement',
+    number: 20,
+    arcana: 'major',
+    keywords: ['renewal', 'awakening', 'evaluation'],
+    meanings: {
+      light: ['redemption', 'forgiveness', 'purpose'],
+      shadow: ['self-doubt', 'criticism', 'delay'],
+    },
+    interpretation: 'Evaluate your life and embrace renewal and purpose.',
+  },
+  {
+    name: 'The World',
+    number: 21,
+    arcana: 'major',
+    keywords: ['completion', 'integration', 'travel'],
+    meanings: {
+      light: ['fulfillment', 'harmony', 'achievement'],
+      shadow: ['incompletion', 'stagnation', 'resistance'],
+    },
+    interpretation: 'Celebrate completion and embrace new horizons.',
+  },
+  // Wands
+  {
+    name: 'Ace of Wands',
+    number: 1,
+    arcana: 'minor',
+    suit: 'wands',
+    element: 'fire',
+    keywords: ['inspiration', 'potential', 'beginnings'],
+    meanings: {
+      light: ['creativity', 'enthusiasm', 'opportunity'],
+      shadow: ['lack of direction', 'delay', 'frustration'],
+    },
+    interpretation: 'A spark of inspiration ignites new potential.',
+  },
+  {
+    name: 'Two of Wands',
+    number: 2,
+    arcana: 'minor',
+    suit: 'wands',
+    element: 'fire',
+    keywords: ['planning', 'decisions', 'partnership'],
+    meanings: {
+      light: ['progress', 'collaboration', 'vision'],
+      shadow: ['fear of change', 'disagreement', 'stagnation'],
+    },
+    interpretation: 'Plan your next steps and seek collaboration.',
+  },
+  {
+    name: 'Three of Wands',
+    number: 3,
+    arcana: 'minor',
+    suit: 'wands',
+    element: 'fire',
+    keywords: ['progress', 'expansion', 'exploration'],
+    meanings: {
+      light: ['success', 'adventure', 'confidence'],
+      shadow: ['delay', 'disappointment', 'lack of vision'],
+    },
+    interpretation: 'Expand your horizons and embrace new adventures.',
+  },
+  {
+    name: 'Four of Wands',
+    number: 4,
+    arcana: 'minor',
+    suit: 'wands',
+    element: 'fire',
+    keywords: ['celebration', 'harmony', 'community'],
+    meanings: {
+      light: ['joy', 'stability', 'togetherness'],
+      shadow: ['instability', 'conflict', 'isolation'],
+    },
+    interpretation: 'Celebrate harmony and community in your life.',
+  },
+  {
+    name: 'Five of Wands',
+    number: 5,
+    arcana: 'minor',
+    suit: 'wands',
+    element: 'fire',
+    keywords: ['competition', 'conflict', 'disagreement'],
+    meanings: {
+      light: ['challenge', 'growth', 'diversity'],
+      shadow: ['aggression', 'disharmony', 'rivalry'],
+    },
+    interpretation: 'Embrace challenges and seek growth through diversity.',
+  },
+  {
+    name: 'Six of Wands',
+    number: 6,
+    arcana: 'minor',
+    suit: 'wands',
+    element: 'fire',
+    keywords: ['victory', 'recognition', 'confidence'],
+    meanings: {
+      light: ['success', 'achievement', 'pride'],
+      shadow: ['ego', 'arrogance', 'defeat'],
+    },
+    interpretation: 'Celebrate victory and recognize your achievements.',
+  },
+  {
+    name: 'Seven of Wands',
+    number: 7,
+    arcana: 'minor',
+    suit: 'wands',
+    element: 'fire',
+    keywords: ['defense', 'courage', 'challenge'],
+    meanings: {
+      light: ['persistence', 'strength', 'conviction'],
+      shadow: ['fear', 'intimidation', 'giving up'],
+    },
+    interpretation: 'Defend your beliefs with courage and conviction.',
+  },
+  {
+    name: 'Eight of Wands',
+    number: 8,
+    arcana: 'minor',
+    suit: 'wands',
+    element: 'fire',
+    keywords: ['speed', 'action', 'movement'],
+    meanings: {
+      light: ['progress', 'excitement', 'change'],
+      shadow: ['delay', 'impatience', 'chaos'],
+    },
+    interpretation: 'Embrace rapid action and exciting changes.',
+  },
+  {
+    name: 'Nine of Wands',
+    number: 9,
+    arcana: 'minor',
+    suit: 'wands',
+    element: 'fire',
+    keywords: ['resilience', 'persistence', 'protection'],
+    meanings: {
+      light: ['strength', 'determination', 'endurance'],
+      shadow: ['exhaustion', 'paranoia', 'giving up'],
+    },
+    interpretation: 'Stay resilient and protect your progress.',
+  },
+  {
+    name: 'Ten of Wands',
+    number: 10,
+    arcana: 'minor',
+    suit: 'wands',
+    element: 'fire',
+    keywords: ['burden', 'responsibility', 'completion'],
+    meanings: {
+      light: ['delegation', 'release', 'accomplishment'],
+      shadow: ['overwhelm', 'stress', 'failure'],
+    },
+    interpretation: 'Release burdens and delegate responsibilities.',
+  },
+  {
+    name: 'Page of Wands',
+    number: 11,
+    arcana: 'minor',
+    suit: 'wands',
+    element: 'fire',
+    keywords: ['inspiration', 'discovery', 'enthusiasm'],
+    meanings: {
+      light: ['curiosity', 'adventure', 'potential'],
+      shadow: ['distraction', 'impulsivity', 'immaturity'],
+    },
+    interpretation: 'Embrace curiosity and explore new possibilities.',
+  },
+  {
+    name: 'Knight of Wands',
+    number: 12,
+    arcana: 'minor',
+    suit: 'wands',
+    element: 'fire',
+    keywords: ['action', 'adventure', 'impulsivity'],
+    meanings: {
+      light: ['courage', 'passion', 'excitement'],
+      shadow: ['recklessness', 'aggression', 'instability'],
+    },
+    interpretation: 'Take bold action and embrace adventure.',
+  },
+  {
+    name: 'Queen of Wands',
+    number: 13,
+    arcana: 'minor',
+    suit: 'wands',
+    element: 'fire',
+    keywords: ['confidence', 'passion', 'leadership'],
+    meanings: {
+      light: ['inspiration', 'warmth', 'influence'],
+      shadow: ['jealousy', 'domination', 'insecurity'],
+    },
+    interpretation: 'Lead with confidence, passion, and warmth.',
+  },
+  {
+    name: 'King of Wands',
+    number: 14,
+    arcana: 'minor',
+    suit: 'wands',
+    element: 'fire',
+    keywords: ['vision', 'leadership', 'authority'],
+    meanings: {
+      light: ['innovation', 'charisma', 'success'],
+      shadow: ['tyranny', 'arrogance', 'impatience'],
+    },
+    interpretation: 'Lead with vision, charisma, and authority.',
+  },
+  // Cups
+  {
+    name: 'Ace of Cups',
+    number: 1,
+    arcana: 'minor',
+    suit: 'cups',
+    element: 'water',
+    keywords: ['love', 'compassion', 'new beginnings'],
+    meanings: {
+      light: ['joy', 'intuition', 'connection'],
+      shadow: ['emotional overwhelm', 'emptiness', 'stagnation'],
+    },
+    interpretation: 'A new beginning filled with love and compassion.',
+  },
+  {
+    name: 'Two of Cups',
+    number: 2,
+    arcana: 'minor',
+    suit: 'cups',
+    element: 'water',
+    keywords: ['partnership', 'harmony', 'connection'],
+    meanings: {
+      light: ['love', 'balance', 'unity'],
+      shadow: ['conflict', 'disharmony', 'separation'],
+    },
+    interpretation: 'Find harmony and connection in partnership.',
+  },
+  {
+    name: 'Three of Cups',
+    number: 3,
+    arcana: 'minor',
+    suit: 'cups',
+    element: 'water',
+    keywords: ['celebration', 'friendship', 'community'],
+    meanings: {
+      light: ['joy', 'support', 'togetherness'],
+      shadow: ['gossip', 'excess', 'isolation'],
+    },
+    interpretation: 'Celebrate friendship and community with joy.',
+  },
+  {
+    name: 'Four of Cups',
+    number: 4,
+    arcana: 'minor',
+    suit: 'cups',
+    element: 'water',
+    keywords: ['introspection', 'contemplation', 'apathy'],
+    meanings: {
+      light: ['reflection', 'gratitude', 'awareness'],
+      shadow: ['boredom', 'dissatisfaction', 'rejection'],
+    },
+    interpretation: 'Reflect on your emotions and find gratitude.',
+  },
+  {
+    name: 'Five of Cups',
+    number: 5,
+    arcana: 'minor',
+    suit: 'cups',
+    element: 'water',
+    keywords: ['loss', 'grief', 'disappointment'],
+    meanings: {
+      light: ['acceptance', 'healing', 'forgiveness'],
+      shadow: ['despair', 'regret', 'bitterness'],
+    },
+    interpretation: 'Accept loss and seek healing and forgiveness.',
+  },
+  {
+    name: 'Six of Cups',
+    number: 6,
+    arcana: 'minor',
+    suit: 'cups',
+    element: 'water',
+    keywords: ['nostalgia', 'memories', 'innocence'],
+    meanings: {
+      light: ['comfort', 'joy', 'generosity'],
+      shadow: ['stagnation', 'idealization', 'naivety'],
+    },
+    interpretation: 'Find comfort and joy in cherished memories.',
+  },
+  {
+    name: 'Seven of Cups',
+    number: 7,
+    arcana: 'minor',
+    suit: 'cups',
+    element: 'water',
+    keywords: ['choices', 'illusions', 'opportunities'],
+    meanings: {
+      light: ['imagination', 'possibility', 'vision'],
+      shadow: ['confusion', 'deception', 'fantasy'],
+    },
+    interpretation: 'Explore your choices and discern reality from illusion.',
+  },
+  {
+    name: 'Eight of Cups',
+    number: 8,
+    arcana: 'minor',
+    suit: 'cups',
+    element: 'water',
+    keywords: ['abandonment', 'withdrawal', 'disappointment'],
+    meanings: {
+      light: ['introspection', 'courage', 'new direction'],
+      shadow: ['fear', 'isolation', 'avoidance'],
+    },
+    interpretation: 'Withdraw from disappointment and seek a new direction.',
+  },
+  {
+    name: 'Nine of Cups',
+    number: 9,
+    arcana: 'minor',
+    suit: 'cups',
+    element: 'water',
+    keywords: ['satisfaction', 'contentment', 'gratitude'],
+    meanings: {
+      light: ['joy', 'fulfillment', 'abundance'],
+      shadow: ['greed', 'complacency', 'unrealistic expectations'],
+    },
+    interpretation: 'Experience satisfaction, contentment, and gratitude.',
+  },
+  {
+    name: 'Ten of Cups',
+    number: 10,
+    arcana: 'minor',
+    suit: 'cups',
+    element: 'water',
+    keywords: ['harmony', 'family', 'happiness'],
+    meanings: {
+      light: ['love', 'unity', 'fulfillment'],
+      shadow: ['conflict', 'disruption', 'unrealistic expectations'],
+    },
+    interpretation: 'Find harmony, love, and happiness in family.',
+  },
+  {
+    name: 'Page of Cups',
+    number: 11,
+    arcana: 'minor',
+    suit: 'cups',
+    element: 'water',
+    keywords: ['intuition', 'creativity', 'sensitivity'],
+    meanings: {
+      light: ['imagination', 'inspiration', 'potential'],
+      shadow: ['emotional vulnerability', 'naivety', 'insecurity'],
+    },
+    interpretation: 'Embrace your intuition, creativity, and sensitivity.',
+  },
+  {
+    name: 'Knight of Cups',
+    number: 12,
+    arcana: 'minor',
+    suit: 'cups',
+    element: 'water',
+    keywords: ['romance', 'charm', 'idealism'],
+    meanings: {
+      light: ['passion', 'adventure', 'imagination'],
+      shadow: ['unrealistic expectations', 'moodiness', 'instability'],
+    },
+    interpretation: 'Pursue romance and charm with idealism.',
+  },
+  {
+    name: 'Queen of Cups',
+    number: 13,
+    arcana: 'minor',
+    suit: 'cups',
+    element: 'water',
+    keywords: ['compassion', 'nurturing', 'intuition'],
+    meanings: {
+      light: ['empathy', 'understanding', 'support'],
+      shadow: ['emotional dependency', 'manipulation', 'insecurity'],
+    },
+    interpretation: 'Lead with compassion, nurturing, and intuition.',
+  },
+  {
+    name: 'King of Cups',
+    number: 14,
+    arcana: 'minor',
+    suit: 'cups',
+    element: 'water',
+    keywords: ['emotional balance', 'diplomacy', 'compassion'],
+    meanings: {
+      light: ['wisdom', 'understanding', 'control'],
+      shadow: ['emotional repression', 'manipulation', 'instability'],
+    },
+    interpretation: 'Lead with emotional balance, diplomacy, and compassion.',
+  },
+  // Swords
+  {
+    name: 'Ace of Swords',
+    number: 1,
+    arcana: 'minor',
+    suit: 'swords',
+    element: 'air',
+    keywords: ['truth', 'clarity', 'new beginnings'],
+    meanings: {
+      light: ['insight', 'logic', 'intellect'],
+      shadow: ['confusion', 'brutality', 'lack of clarity'],
+    },
+    interpretation: 'A new beginning filled with truth and clarity.',
+  },
+  {
+    name: 'Two of Swords',
+    number: 2,
+    arcana: 'minor',
+    suit: 'swords',
+    element: 'air',
+    keywords: ['decisions', 'balance', 'stalemate'],
+    meanings: {
+      light: ['compromise', 'diplomacy', 'objectivity'],
+      shadow: ['indecision', 'avoidance', 'blindness'],
+    },
+    interpretation: 'Seek balance and make objective decisions.',
+  },
+  {
+    name: 'Three of Swords',
+    number: 3,
+    arcana: 'minor',
+    suit: 'swords',
+    element: 'air',
+    keywords: ['heartbreak', 'sorrow', 'loss'],
+    meanings: {
+      light: ['acceptance', 'healing', 'forgiveness'],
+      shadow: ['grief', 'betrayal', 'bitterness'],
+    },
+    interpretation: 'Heal from heartbreak and loss through acceptance.',
+  },
+  {
+    name: 'Four of Swords',
+    number: 4,
+    arcana: 'minor',
+    suit: 'swords',
+    element: 'air',
+    keywords: ['rest', 'recovery', 'contemplation'],
+    meanings: {
+      light: ['peace', 'solitude', 'rejuvenation'],
+      shadow: ['isolation', 'stagnation', 'avoidance'],
+    },
+    interpretation: 'Rest, recover, and contemplate in solitude.',
+  },
+  {
+    name: 'Five of Swords',
+    number: 5,
+    arcana: 'minor',
+    suit: 'swords',
+    element: 'air',
+    keywords: ['conflict', 'defeat', 'dishonor'],
+    meanings: {
+      light: ['acceptance', 'compromise', 'moving on'],
+      shadow: ['aggression', 'bullying', 'resentment'],
+    },
+    interpretation: 'Accept defeat and move on with compromise.',
+  },
+  {
+    name: 'Six of Swords',
+    number: 6,
+    arcana: 'minor',
+    suit: 'swords',
+    element: 'air',
+    keywords: ['transition', 'change', 'moving on'],
+    meanings: {
+      light: ['acceptance', 'relief', 'new direction'],
+      shadow: ['resistance', 'burden', 'uncertainty'],
+    },
+    interpretation: 'Embrace transition and move on to a new direction.',
+  },
+  {
+    name: 'Seven of Swords',
+    number: 7,
+    arcana: 'minor',
+    suit: 'swords',
+    element: 'air',
+    keywords: ['deception', 'betrayal', 'theft'],
+    meanings: {
+      light: ['resourcefulness', 'strategy', 'cunning'],
+      shadow: ['dishonesty', 'manipulation', 'guilt'],
+    },
+    interpretation: 'Be resourceful and strategic, but avoid deception.',
+  },
+  {
+    name: 'Eight of Swords',
+    number: 8,
+    arcana: 'minor',
+    suit: 'swords',
+    element: 'air',
+    keywords: ['restriction', 'limitation', 'powerlessness'],
+    meanings: {
+      light: ['self-awareness', 'release', 'empowerment'],
+      shadow: ['fear', 'victimhood', 'helplessness'],
+    },
+    interpretation: 'Overcome restriction and find empowerment.',
+  },
+  {
+    name: 'Nine of Swords',
+    number: 9,
+    arcana: 'minor',
+    suit: 'swords',
+    element: 'air',
+    keywords: ['anxiety', 'fear', 'worry'],
+    meanings: {
+      light: ['acceptance', 'courage', 'perspective'],
+      shadow: ['nightmares', 'paranoia', 'despair'],
+    },
+    interpretation: 'Overcome anxiety and find courage and perspective.',
+  },
+  {
+    name: 'Ten of Swords',
+    number: 10,
+    arcana: 'minor',
+    suit: 'swords',
+    element: 'air',
+    keywords: ['endings', 'failure', 'defeat'],
+    meanings: {
+      light: ['acceptance', 'renewal', 'release'],
+      shadow: ['despair', 'victimhood', 'rock bottom'],
+    },
+    interpretation: 'Accept endings and embrace renewal and release.',
+  },
+  {
+    name: 'Page of Swords',
+    number: 11,
+    arcana: 'minor',
+    suit: 'swords',
+    element: 'air',
+    keywords: ['curiosity', 'communication', 'intellect'],
+    meanings: {
+      light: ['insight', 'awareness', 'honesty'],
+      shadow: ['gossip', 'criticism', 'impulsivity'],
+    },
+    interpretation: 'Embrace curiosity, communication, and intellect.',
+  },
+  {
+    name: 'Knight of Swords',
+    number: 12,
+    arcana: 'minor',
+    suit: 'swords',
+    element: 'air',
+    keywords: ['action', 'ambition', 'determination'],
+    meanings: {
+      light: ['courage', 'focus', 'efficiency'],
+      shadow: ['aggression', 'recklessness', 'impulsivity'],
+    },
+    interpretation: 'Take action with ambition and determination.',
+  },
+  {
+    name: 'Queen of Swords',
+    number: 13,
+    arcana: 'minor',
+    suit: 'swords',
+    element: 'air',
+    keywords: ['intellect', 'clarity', 'independence'],
+    meanings: {
+      light: ['wisdom', 'objectivity', 'honesty'],
+      shadow: ['coldness', 'criticism', 'judgment'],
+    },
+    interpretation: 'Lead with intellect, clarity, and independence.',
+  },
+  {
+    name: 'King of Swords',
+    number: 14,
+    arcana: 'minor',
+    suit: 'swords',
+    element: 'air',
+    keywords: ['authority', 'logic', 'justice'],
+    meanings: {
+      light: ['wisdom', 'fairness', 'integrity'],
+      shadow: ['tyranny', 'judgment', 'oppression'],
+    },
+    interpretation: 'Lead with authority, logic, and justice.',
+  },
+  // Pentacles
+  {
+    name: 'Ace of Pentacles',
+    number: 1,
+    arcana: 'minor',
+    suit: 'pentacles',
+    element: 'earth',
+    keywords: ['opportunity', 'prosperity', 'new beginnings'],
+    meanings: {
+      light: ['abundance', 'security', 'potential'],
+      shadow: ['greed', 'materialism', 'missed opportunity'],
+    },
+    interpretation: 'A new beginning filled with opportunity and prosperity.',
+  },
+  {
+    name: 'Two of Pentacles',
+    number: 2,
+    arcana: 'minor',
+    suit: 'pentacles',
+    element: 'earth',
+    keywords: ['balance', 'adaptability', 'priorities'],
+    meanings: {
+      light: ['flexibility', 'resourcefulness', 'harmony'],
+      shadow: ['stress', 'overwhelm', 'instability'],
+    },
+    interpretation: 'Seek balance and adapt to changing priorities.',
+  },
+  {
+    name: 'Three of Pentacles',
+    number: 3,
+    arcana: 'minor',
+    suit: 'pentacles',
+    element: 'earth',
+    keywords: ['collaboration', 'skill', 'recognition'],
+    meanings: {
+      light: ['teamwork', 'expertise', 'success'],
+      shadow: ['lack of effort', 'incompetence', 'disharmony'],
+    },
+    interpretation: 'Collaborate and share your skills for success.',
+  },
+  {
+    name: 'Four of Pentacles',
+    number: 4,
+    arcana: 'minor',
+    suit: 'pentacles',
+    element: 'earth',
+    keywords: ['security', 'stability', 'control'],
+    meanings: {
+      light: ['savings', 'conservatism', 'protection'],
+      shadow: ['greed', 'hoarding', 'fear of loss'],
+    },
+    interpretation: 'Seek security and stability, but avoid greed.',
+  },
+  {
+    name: 'Five of Pentacles',
+    number: 5,
+    arcana: 'minor',
+    suit: 'pentacles',
+    element: 'earth',
+    keywords: ['poverty', 'hardship', 'isolation'],
+    meanings: {
+      light: ['community', 'support', 'faith'],
+      shadow: ['despair', 'loneliness', 'lack of resources'],
+    },
+    interpretation: 'Seek community and support during hardship.',
+  },
+  {
+    name: 'Six of Pentacles',
+    number: 6,
+    arcana: 'minor',
+    suit: 'pentacles',
+    element: 'earth',
+    keywords: ['generosity', 'charity', 'sharing'],
+    meanings: {
+      light: ['compassion', 'gratitude', 'abundance'],
+      shadow: ['greed', 'dependence', 'imbalance'],
+    },
+    interpretation: 'Practice generosity and share your abundance.',
+  },
+  {
+    name: 'Seven of Pentacles',
+    number: 7,
+    arcana: 'minor',
+    suit: 'pentacles',
+    element: 'earth',
+    keywords: ['patience', 'investment', 'evaluation'],
+    meanings: {
+      light: ['growth', 'planning', 'perseverance'],
+      shadow: ['impatience', 'disappointment', 'lack of effort'],
+    },
+    interpretation: 'Be patient and evaluate your investments.',
+  },
+  {
+    name: 'Eight of Pentacles',
+    number: 8,
+    arcana: 'minor',
+    suit: 'pentacles',
+    element: 'earth',
+    keywords: ['skill', 'craftsmanship', 'dedication'],
+    meanings: {
+      light: ['mastery', 'quality', 'attention to detail'],
+      shadow: ['perfectionism', 'boredom', 'lack of motivation'],
+    },
+    interpretation: 'Develop your skills with dedication and craftsmanship.',
+  },
+  {
+    name: 'Nine of Pentacles',
+    number: 9,
+    arcana: 'minor',
+    suit: 'pentacles',
+    element: 'earth',
+    keywords: ['independence', 'luxury', 'gratitude'],
+    meanings: {
+      light: ['success', 'security', 'self-sufficiency'],
+      shadow: ['isolation', 'materialism', 'complacency'],
+    },
+    interpretation: 'Enjoy independence and luxury with gratitude.',
+  },
+  {
+    name: 'Ten of Pentacles',
+    number: 10,
+    arcana: 'minor',
+    suit: 'pentacles',
+    element: 'earth',
+    keywords: ['legacy', 'family', 'wealth'],
+    meanings: {
+      light: ['inheritance', 'security', 'tradition'],
+      shadow: ['greed', 'burden', 'instability'],
+    },
+    interpretation: 'Build a lasting legacy of family and wealth.',
+  },
+  {
+    name: 'Page of Pentacles',
+    number: 11,
+    arcana: 'minor',
+    suit: 'pentacles',
+    element: 'earth',

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BirthDateInput from '@/components/BirthDateInput';
@@ -6,6 +7,12 @@ import ReadingSummary from '@/components/ReadingSummary';
 import MeditationGuide from '@/components/meditation/MeditationGuide';
 import { drawMinorArcana, drawMajorArcana, TarotCard } from '@/utils/tarotData';
 import { toast } from '@/hooks/use-toast';
+import { 
+  initializeQuantumCircuit, 
+  applyEntanglement, 
+  performQuantumMeasurement, 
+  verifyApiKey 
+} from '@/utils/quantumAPI';
 
 const PHI = 1.618033988749895;
 
@@ -73,6 +80,26 @@ const Index = () => {
   const [drawnCards, setDrawnCards] = useState<Record<string, TarotCard>>({});
   const [showMeditation, setShowMeditation] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
+  const [quantumCircuitId, setQuantumCircuitId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Verify IBM-Q API key on component mount
+    const apiKeyStatus = verifyApiKey();
+    if (apiKeyStatus.status === 'verified') {
+      console.log('IBM Quantum API key verified successfully');
+      toast({
+        title: "Quantum API Connected",
+        description: "Successfully connected to IBM Quantum Experience.",
+      });
+    } else {
+      console.error('IBM Quantum API key verification failed');
+      toast({
+        title: "Quantum API Connection Failed",
+        description: "Unable to connect to quantum computing services.",
+        variant: "destructive"
+      });
+    }
+  }, []);
 
   useEffect(() => {
     let frameId: number;
@@ -86,23 +113,71 @@ const Index = () => {
     return () => cancelAnimationFrame(frameId);
   }, [isRunning]);
 
-  const handleStart = (dates: BirthDates) => {
+  const handleStart = async (dates: BirthDates) => {
     setBirthDates(dates);
     setShowMeditation(true);
-    const initialCards: Record<string, TarotCard> = {};
-    POSITIONS.forEach(pos => {
-      initialCards[pos.id] = pos.id === 'advice' ? drawMajorArcana() : drawMinorArcana();
-    });
-    setDrawnCards(initialCards);
+    
+    // Initialize quantum circuit for this session
+    try {
+      const circuit = await initializeQuantumCircuit(6); // 6 qubits for 6 cards
+      if (circuit.status === 'initialized') {
+        setQuantumCircuitId(circuit.circuitId);
+        toast({
+          title: "Quantum Circuit Initialized",
+          description: "A dedicated quantum circuit has been prepared for your reading.",
+        });
+      }
+    } catch (error) {
+      console.error('Error initializing quantum circuit:', error);
+    }
   };
 
-  const handleMeditationComplete = () => {
+  const handleMeditationComplete = async () => {
     setShowMeditation(false);
     setIsRunning(true);
-    toast({
-      title: "Quantum Entanglement Initiated",
-      description: "Your cards have been drawn. Click each card to reveal its message and meaning.",
-    });
+    
+    // If we have a quantum circuit, perform entanglement operations
+    if (quantumCircuitId) {
+      // Create quantum entanglement between positions
+      applyEntanglement(quantumCircuitId, 0, 1); // Past and present
+      applyEntanglement(quantumCircuitId, 1, 2); // Present and future
+      applyEntanglement(quantumCircuitId, 3, 4); // Above and below
+      
+      // Perform quantum measurement to influence card drawing
+      const measurement = performQuantumMeasurement(quantumCircuitId);
+      
+      if (measurement.status === 'measured') {
+        // Use quantum measurements to influence card selection
+        const initialCards: Record<string, TarotCard> = {};
+        
+        POSITIONS.forEach((pos, index) => {
+          // Use quantum measurement to influence card selection
+          const quantumInfluence = measurement.results[index].value;
+          initialCards[pos.id] = pos.id === 'advice' 
+            ? drawMajorArcana(quantumInfluence) 
+            : drawMinorArcana(quantumInfluence);
+        });
+        
+        setDrawnCards(initialCards);
+        
+        toast({
+          title: "Quantum Entanglement Completed",
+          description: "Your cards have been quantumly entangled. Click each card to reveal its message.",
+        });
+      }
+    } else {
+      // Fallback to non-quantum card drawing
+      const initialCards: Record<string, TarotCard> = {};
+      POSITIONS.forEach(pos => {
+        initialCards[pos.id] = pos.id === 'advice' ? drawMajorArcana() : drawMinorArcana();
+      });
+      setDrawnCards(initialCards);
+      
+      toast({
+        title: "Cards Drawn",
+        description: "Your cards have been drawn. Click each card to reveal its message and meaning.",
+      });
+    }
   };
 
   const handleCardClick = (id: string) => {
